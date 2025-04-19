@@ -90,7 +90,7 @@ namespace Infraestructura.Persistence
 
             // ApprovalRule
             modelBuilder.Entity<ApprovalRule>()
-                .Property(a => a.Id).IsRequired().HasColumnType("bigint").IsRequired();
+                .Property(a => a.Id).HasColumnType("bigint").IsRequired();
             modelBuilder.Entity<ApprovalRule>()
                 .Property(a => a.MinAmount).HasColumnType("decimal(18,2)").IsRequired();
             modelBuilder.Entity<ApprovalRule>()
@@ -104,7 +104,7 @@ namespace Infraestructura.Persistence
                 .WithMany(pt => pt.ApprovalRules)
                 .HasForeignKey(a => a.Type);
             modelBuilder.Entity<ApprovalRule>()
-                .Property(a => a.StepOrder).IsRequired().HasColumnType("int").IsRequired();
+                .Property(a => a.StepOrder).HasColumnType("int").IsRequired();
             modelBuilder.Entity<ApprovalRule>()
                 .HasOne(a => a.ApproverRole)
                 .WithMany(r => r.ApprovalRules)

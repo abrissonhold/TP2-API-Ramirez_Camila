@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Application.Interfaces
 {
-    public interface IProjectProposalCommand
+    public interface IProjectApprovalStepCommand
     {
-        public Task<ProjectProposal> CreateProjectProposal(ProjectProposal projectProposal);
+        public Task CreateProjectApprovalStep(ProjectProposal projectProposal, List<ApprovalRule> rules);
     }
 }

@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Application.Interfaces
 {
-    public interface IProjectProposalCommand
+    public interface IApprovalRuleQuery
     {
-        public Task<ProjectProposal> CreateProjectProposal(ProjectProposal projectProposal);
+        public List<ApprovalRule> GetApplicableRule(ProjectProposal projectProposal);
     }
 }

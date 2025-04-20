@@ -13,11 +13,15 @@ namespace Application.UserCase
     public class ProjectProposalService : IProjectProposalService
     {
         private readonly IProjectProposalCommand _command;
-
-        public ProjectProposalService(IProjectProposalCommand command)
+        private readonly IApprovalRuleQuery _ruleQuery;
+        private readonly IProjectApprovalStepCommand _stepCommand;
+        public ProjectProposalService(IProjectProposalCommand command, IApprovalRuleQuery ruleQuery, IProjectApprovalStepCommand stepCommand)
         {
             _command = command;
+            _ruleQuery = ruleQuery;
+            _stepCommand = stepCommand;
         }
+
         public async Task<ProjectProposalResponse> CreateProjectProposal(ProjectProposalRequest ppr)
         {
             ProjectProposal pp = new ProjectProposal
@@ -33,7 +37,11 @@ namespace Application.UserCase
                 CreatedBy = ppr.CreatedBy,
             };
 
-            await _command.CreateProjectProposal(pp);
+            pp = await _command.CreateProjectProposal(pp);
+
+            List<ApprovalRule> rules = _ruleQuery.GetApplicableRule(pp);
+            await _stepCommand.CreateProjectApprovalStep(pp, rules);
+
             return new ProjectProposalResponse
             {
                 Id = pp.Id,
@@ -42,13 +50,13 @@ namespace Application.UserCase
                 Area = pp.Area,
                 AreaDetail = new GenericResponse
                 {
-                    Id = pp.AreaDetail.Id,
+                    Id = pp.Area,
                     Name = pp.AreaDetail.Name
                 },
                 Type = pp.Type,
                 ProjectType = new GenericResponse
                 {
-                    Id = pp.ProjectType.Id,
+                    Id = pp.Type,
                     Name = pp.ProjectType.Name
                 },
                 EstimatedAmount = pp.EstimatedAmount,
@@ -56,20 +64,20 @@ namespace Application.UserCase
                 Status = pp.Status,
                 ApprovalStatus = new GenericResponse
                 {
-                    Id = pp.ApprovalStatus.Id,
+                    Id = pp.Status,
                     Name = pp.ApprovalStatus.Name
                 },
                 CreateAt = pp.CreateAt,
                 CreatedBy = pp.CreatedBy,
                 CreatedByUser = new UserResponse
                 {
-                    Id = pp.CreatedByUser.Id,
+                    Id = pp.CreatedBy,
                     Name = pp.CreatedByUser.Name,
                     Email = pp.CreatedByUser.Email,
                     Role = pp.CreatedByUser.Role,
                     ApproverRole = new GenericResponse
                     {
-                        Id = pp.CreatedByUser.ApproverRole.Id,
+                        Id = pp.CreatedByUser.Role,
                         Name = pp.CreatedByUser.ApproverRole.Name
                     }
                 },

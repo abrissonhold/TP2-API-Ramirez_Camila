@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Numerics;
 
-namespace Infraestructura.Persistence
+namespace Infrastructure.Persistence
 {
     public class AppDbContext : DbContext
     {
@@ -43,7 +43,7 @@ namespace Infraestructura.Persistence
             modelBuilder.Entity<ProjectType>().HasData(
                  new ProjectType { Id = 1, Name = "Mejora de Procesos" },
                  new ProjectType { Id = 2, Name = "Innovación y Desarrollo" },
-                 new ProjectType { Id = 3, Name = "Infraestructura" },
+                 new ProjectType { Id = 3, Name = "Infrastructure" },
                  new ProjectType { Id = 4, Name = "Capacitación Interna" }
             );
 

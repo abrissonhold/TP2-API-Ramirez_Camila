@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace Infraestructura.Migrations
+namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class Init : Migration
@@ -246,7 +246,7 @@ namespace Infraestructura.Migrations
                 {
                     { 1, "Mejora de Procesos" },
                     { 2, "Innovación y Desarrollo" },
-                    { 3, "Infraestructura" },
+                    { 3, "Infrastructure" },
                     { 4, "Capacitación Interna" }
                 });
 

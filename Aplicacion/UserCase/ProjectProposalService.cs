@@ -22,19 +22,20 @@ namespace Application.UserCase
             _stepCommand = stepCommand;
         }
 
-        public async Task<ProjectProposalResponse> CreateProjectProposal(ProjectProposalRequest ppr)
+        public async Task<ProjectProposalResponse> CreateProjectProposal(string title, string description, 
+            int area, int type, decimal estimatedAmount, int estimatedDuration, int createdBy)
         {
             ProjectProposal pp = new ProjectProposal
             {
-                Title = ppr.Title,
-                Description = ppr.Description,
-                Area = ppr.Area,
-                Type = ppr.Type,
-                EstimatedAmount = ppr.EstimatedAmount,
-                EstimatedDuration = ppr.EstimatedDuration,
+                Title = title,
+                Description = description,
+                Area = area,
+                Type = type,
+                EstimatedAmount = estimatedAmount,
+                EstimatedDuration = estimatedDuration,
                 Status = 1,
-                CreateAt = DateTime.Now,
-                CreatedBy = ppr.CreatedBy,
+                CreateAt = DateTime.Now,                
+                CreatedBy = createdBy
             };
 
             pp = await _command.CreateProjectProposal(pp);

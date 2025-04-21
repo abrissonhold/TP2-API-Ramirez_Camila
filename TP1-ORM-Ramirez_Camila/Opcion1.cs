@@ -1,15 +1,8 @@
-﻿using Application.Interfaces;
-using Application.Request;
+﻿using Application.Exceptions;
 using Application.UserCase;
-using Domain.Entities;
 using Infrastructure.Command;
 using Infrastructure.Persistence;
 using Infrastructure.Query;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TP1_ORM_Ramirez_Camila
 {

@@ -7,15 +7,18 @@ using Infrastructure.Query;
 using TP1_ORM_Ramirez_Camila;
 
 Console.ForegroundColor = ConsoleColor.DarkGreen;
-var context = new AppDbContext();
-int? actualUser = null;
 
-while (await Menu(context))
+var context = new AppDbContext();
+
+var usuario = await LogIn.IniciarSesion(context);
+int userId = usuario.Id;
+
+while (await Menu(context, userId))
 {
     Console.Clear();
 }
 
-static async Task<bool> Menu(AppDbContext context)
+static async Task<bool> Menu(AppDbContext context, int userId)
 {
     Console.WriteLine("*---------------------------------------------------------------------------*");
     Console.WriteLine("                                                                             ");
@@ -32,13 +35,13 @@ static async Task<bool> Menu(AppDbContext context)
     switch (Console.ReadLine())
     {
         case "1":
-            await Opcion1.CrearSolicitud(context, actualUser);
+            await Opcion1.CrearSolicitud(context, userId);
             break;
         case "2":
-            await Opcion2.AprobarPaso(context, actualUser);
+            await Opcion2.AprobarORechazarPaso(context, userId);
             break;
         case "3":
-            //await Opcion3.VerEstado(context);
+            //await Opcion3.VerEstado(context, userId);
             break;
         case "4":
             Console.Clear();

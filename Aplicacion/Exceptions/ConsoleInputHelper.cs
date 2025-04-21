@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Application.Interfaces;
+using Application.UserCase;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Interfaces
+namespace Application.Exceptions
 {
     public static class ConsoleInputHelper
     {
@@ -22,7 +24,7 @@ namespace Application.Interfaces
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("El campo no puede estar vacío.");
-                    Console.ResetColor();
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
                 }
 
             } while (string.IsNullOrWhiteSpace(input));
@@ -41,11 +43,11 @@ namespace Application.Interfaces
                 isValid = int.TryParse(Console.ReadLine(), out inputNumber);
                 Console.ResetColor();
 
-                if (!isValid || (min != null && inputNumber < min) || (max != null && inputNumber > max))
+                if (!isValid || min != null && inputNumber < min || max != null && inputNumber > max)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Valor inválido. Intente nuevamente.");
-                    Console.ResetColor();
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
                     isValid = false;
                 }
 
@@ -63,19 +65,44 @@ namespace Application.Interfaces
                 Console.Write(inputMessage);
                 Console.ForegroundColor = ConsoleColor.Green;
                 isValid = decimal.TryParse(Console.ReadLine(), out inputValue);
-                Console.ResetColor();
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
 
-                if (!isValid || (min != null && inputValue < min) || (max != null && inputValue > max))
+                if (!isValid || min != null && inputValue < min || max != null && inputValue > max)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Ingrese un número decimal válido.");
-                    Console.ResetColor();
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
                     isValid = false;
                 }
 
             } while (!isValid);
 
             return inputValue;
+        }
+
+        public static string LeerEmail(string inputMessage)
+        {
+            string inputEmail;
+            var regex = new System.Text.RegularExpressions.Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+
+            do
+            {
+                Console.Write(inputMessage);
+                Console.ForegroundColor = ConsoleColor.Green;
+                inputEmail = Console.ReadLine()!;
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+
+                if (!regex.IsMatch(inputEmail))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Ingrese un correo electrónico válido.");
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    inputEmail = "";
+                }
+
+            } while (string.IsNullOrWhiteSpace(inputEmail));
+
+            return inputEmail;
         }
     }
 }

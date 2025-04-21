@@ -1,63 +1,39 @@
-﻿using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Application.Exceptions;
+using Application.UserCase;
+using Domain.Entities;
+using Infrastructure.Persistence;
+using Infrastructure.Query;
 
 namespace TP1_ORM_Ramirez_Camila
 {
     public class LogIn
     {
-        public static async Task IniciarSesion()
-        {
+        public static async Task<User> IniciarSesion(AppDbContext context)
+        {                
             User? user = null;
+            var userService = new UserService(new UserQuery(context)); 
+            Console.WriteLine("\n                    Iniciar Sesión                         \n");
+            Console.WriteLine("---------------------------------------------------------\n");
             while (user == null)
             {
-                Console.Clear();
-                Console.WriteLine("                    Iniciar Sesión                         ");
-                Console.WriteLine("---------------------------------------------------------\n");
-                Console.Write("Ingrese su mail: ");
-
-                int userMail = Console.ReadLine();
-
-                user = context.User.FirstOrDefault(u => u.Id == userId);
+                string email = ConsoleInputHelper.LeerEmail("Ingrese su correo: ");
+                user = userService.GetByMail(email);
 
                 if (user == null)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("❌ Usuario no encontrado. Intente de nuevo.");
-                    Console.ResetColor();
-                    Thread.Sleep(1500);
+                    Console.WriteLine("Usuario no encontrado. Intente nuevamente.");
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
                 }
             }
 
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"\n✅ Bienvenido, {user.Name} (Rol: {user.ApproverRole?.Name ?? "N/A"})");
-            Console.ResetColor();
-            Thread.Sleep(1000);
+            Console.Clear();
+            Console.WriteLine($"Bienvenido, {user.Name} (Rol: {user.ApproverRole.Name})\n");
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Thread.Sleep(1500);
 
             return user;
-        
-            Console.Clear();
-            Console.WriteLine("                    Iniciar Sesión                         ");
-            Console.WriteLine("---------------------------------------------------------\n");
-            Console.Write("Ingrese su mail: ");
-            Console.ForegroundColor = ConsoleColor.Green;
-            int userId = int.Parse(Console.ReadLine()!);
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            var context = new Infrastructure.Persistence.AppDbContext();
-            var user = context.User.FirstOrDefault(u => u.Id == userId);
-            if (user == null)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("❌ Usuario no encontrado.");
-                Console.ResetColor();
-                return;
-            }
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"\nBienvenido, {user.Name} (Rol: {user.ApproverRole?.Name ?? "N/A"})");
-            Console.ResetColor();
         }
     }
 }

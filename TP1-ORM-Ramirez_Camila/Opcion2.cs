@@ -1,4 +1,6 @@
-﻿using Infrastructure.Persistence;
+﻿using Application.UserCase;
+using Infrastructure.Persistence;
+using Infrastructure.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,60 +11,63 @@ namespace TP1_ORM_Ramirez_Camila
 {
     public class Opcion2
     {
-        public static async Task AprobarORechazarPaso(AppDbContext context)
+        public static async Task AprobarORechazarPaso(AppDbContext context, int userId)
         {
             Console.Clear();
-            Console.WriteLine("Para continuar debe iniciar sesion");
-            Console.ResetColor();
-
-            Console.Write("Ingrese su ID de usuario: ");
-            int userId = int.Parse(Console.ReadLine()!);
-
-            var user = context.User.FirstOrDefault(u => u.Id == userId);
+            var userService = new UserService(new UserQuery(context));
+            var user = userService.GetById(userId);
 
             if (user == null)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("❌ Usuario no encontrado.");
+                Console.WriteLine("Usuario no encontrado.");
                 Console.ResetColor();
                 return;
             }
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"\nBienvenido, {user.Name} (Rol: {user.ApproverRole?.Name ?? "N/A"})");
-            Console.ResetColor();
+            var stepService = new ProjectApprovalStepService(new ProjectApprovalStepQuery(context));
+            var steps = stepService.GetPendingStepsByRole(user.Role);
 
-            // Buscar pasos pendientes que coincidan con el rol del usuario
-            var steps = context.ProjectApprovalStep
-                .Where(s => s.ApproverRoleId == user.Role && s.Status == 1)
-                .OrderBy(s => s.StepOrder)
-                .ToList();
-
-            if (!steps.Any())
+            if (steps.Count == 0)
             {
-                Console.WriteLine("\n✅ No hay pasos pendientes de aprobación para su rol.");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("No hay pasos pendientes de aprobación para su rol.");
+                Console.ResetColor();
                 return;
             }
 
-            Console.WriteLine("\n📋 Pasos pendientes:");
+            Console.WriteLine("\nPasos pendientes:");
+
             foreach (var step in steps)
             {
-                Console.WriteLine($"🧾 Paso ID: {step.Id} | Proyecto: {step.ProjectProposal.Title} | Paso: {step.StepOrder}");
+                Console.WriteLine($"Paso ID: {step.Id} | Proyecto: {step.ProjectProposal.Title} | Paso #{step.StepOrder} | Estado: #{step.ApprovalStatus.Name}");
             }
 
             Console.Write("\nIngrese el ID del paso que desea procesar: ");
-            long pasoId = long.Parse(Console.ReadLine()!);
-
-            var pasoSeleccionado = steps.FirstOrDefault(s => s.Id == pasoId);
-
-            if (pasoSeleccionado == null)
+            if (!long.TryParse(Console.ReadLine(), out long pasoId))
             {
-                Console.WriteLine("❌ Paso inválido.");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Ingrese un ID válido.");
+                Console.ResetColor();
+                return;
+            }
+
+            var pasoSeleccionado = stepService.GetById(pasoId);
+
+            if (pasoSeleccionado == null || pasoSeleccionado.Status != 1 || pasoSeleccionado.ApproverRoleId != user.Role)
+            {
+                Console.WriteLine("❌ Paso inválido o no autorizado.");
                 return;
             }
 
             Console.Write("¿Desea aprobar (A) o rechazar (R) este paso?: ");
             string decision = Console.ReadLine()!.Trim().ToUpper();
+
+            if (decision != "A" && decision != "R")
+            {
+                Console.WriteLine("❌ Opción inválida. Debe ingresar 'A' o 'R'.");
+                return;
+            }
 
             Console.Write("Observaciones (opcional): ");
             string? obs = Console.ReadLine();

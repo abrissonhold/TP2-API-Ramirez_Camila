@@ -10,7 +10,7 @@
                 Console.Write(inputMessage);
                 Console.ForegroundColor = ConsoleColor.Green;
                 input = Console.ReadLine()!;
-                Console.ResetColor();
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
 
                 if (string.IsNullOrWhiteSpace(input))
                 {
@@ -28,7 +28,7 @@
             Console.Write(inputMessage);
             Console.ForegroundColor = ConsoleColor.Green;
             string input = Console.ReadLine()!;
-            Console.ResetColor();
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
             if (string.IsNullOrWhiteSpace(input))
             {
                 return null;
@@ -94,7 +94,7 @@
             {
                 Console.Write(inputMessage);
                 Console.ForegroundColor = ConsoleColor.Green;
-                isValid = !long.TryParse(Console.ReadLine(), out inputValue);
+                isValid = long.TryParse(Console.ReadLine(), out inputValue);
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
 
                 if (!isValid || min != null && inputValue < min || max != null && inputValue > max)

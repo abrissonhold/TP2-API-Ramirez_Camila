@@ -8,12 +8,15 @@ var context = new AppDbContext();
 var usuario = await LogIn.IniciarSesion(context);
 int userId = usuario.Id;
 
-while (await Menu(context, userId))
+while (true)
 {
+    (bool continuar, int newUserId) = await Menu(context, userId);
+    userId = newUserId;
+    if (!continuar) break;
     Console.Clear();
 }
 
-static async Task<bool> Menu(AppDbContext context, int userId)
+static async Task<(bool Continuar, int NewUserId)> Menu(AppDbContext context, int userId)
 {
     Console.WriteLine("*---------------------------------------------------------------------------*");
     Console.WriteLine("                                                                             ");
@@ -22,7 +25,8 @@ static async Task<bool> Menu(AppDbContext context, int userId)
     Console.WriteLine("                     1. Crear nueva solicitud                                ");
     Console.WriteLine("                     2. Aprobar o rechazar paso                              ");
     Console.WriteLine("                     3. Ver estado de un proyecto                            ");
-    Console.WriteLine("                     4. Salir del sistema                                    ");
+    Console.WriteLine("                     4. Cambiar de usuario                                   "); 
+    Console.WriteLine("                     5. Salir del sistema                                    ");
     Console.WriteLine("                                                                             ");
     Console.WriteLine("*---------------------------------------------------------------------------*");
     Console.Write("\nIngrese una opción: ");
@@ -36,14 +40,20 @@ static async Task<bool> Menu(AppDbContext context, int userId)
             await Opcion2.AprobarORechazarPaso(context, userId);
             break;
         case "3":
-            //await Opcion3.VerEstado(context, userId);
+            await Opcion3.VerEstado(context, userId);
             break;
         case "4":
+            var usuario = await LogIn.IniciarSesion(context);
+            userId = usuario.Id;
+            Console.WriteLine("\nPresione cualquier tecla para continuar...");
+            Console.ReadKey();
+            return (true, userId);
+        case "5":
             Console.Clear();
             Console.WriteLine("*---------------------------------------------------------------------------*");
             Console.WriteLine("\n          Gracias por usar nuestro sistema. ¡Hasta la próxima!           \n");
             Console.WriteLine("*---------------------------------------------------------------------------*");
-            return false;
+            return (false, userId);
         default:
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("\nOpción inválida. Por favor, elija una opción del 1 al 4.");
@@ -53,5 +63,5 @@ static async Task<bool> Menu(AppDbContext context, int userId)
 
     Console.WriteLine("\nPresione cualquier tecla para continuar...");
     Console.ReadKey();
-    return true;
+    return (true, userId);
 }

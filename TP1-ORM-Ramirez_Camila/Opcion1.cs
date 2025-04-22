@@ -25,6 +25,7 @@ namespace TP1_ORM_Ramirez_Camila
 
             var service = new ProjectProposalService(
                 new ProjectProposalCommand(context),
+                new ProjectProposalQuery(context),
                 new ApprovalRuleQuery(context),
                 new ProjectApprovalStepCommand(context)
             );
@@ -33,7 +34,7 @@ namespace TP1_ORM_Ramirez_Camila
 
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"\nProyecto creado con éxito. ID: {response.Id}");
-            Console.ResetColor();
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
         }
     }
 }

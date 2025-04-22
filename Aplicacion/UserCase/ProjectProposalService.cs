@@ -7,11 +7,18 @@ namespace Application.UserCase
     public class ProjectProposalService : IProjectProposalService
     {
         private readonly IProjectProposalCommand _command;
+        private readonly IProjectProposalQuery _query;
         private readonly IApprovalRuleQuery _ruleQuery;
         private readonly IProjectApprovalStepCommand _stepCommand;
-        public ProjectProposalService(IProjectProposalCommand command, IApprovalRuleQuery ruleQuery, IProjectApprovalStepCommand stepCommand)
+
+        public ProjectProposalService(
+            IProjectProposalCommand command, 
+            IProjectProposalQuery query, 
+            IApprovalRuleQuery ruleQuery, 
+            IProjectApprovalStepCommand stepCommand)
         {
             _command = command;
+            _query = query;
             _ruleQuery = ruleQuery;
             _stepCommand = stepCommand;
         }
@@ -77,6 +84,56 @@ namespace Application.UserCase
                     }
                 },
             };
+        }
+
+        public List<ProjectProposalResponseDetail> GetDetail(int userId)
+        {
+            var propuestas = _query.GetByCreatorId(userId);
+
+            return propuestas.Select(pp => new ProjectProposalResponseDetail
+            {
+                ProjectProposal = new ProjectProposalResponse
+                {
+                    Id = pp.Id,
+                    Title = pp.Title,
+                    Description = pp.Description,
+                    Area = pp.Area,
+                    AreaDetail = new GenericResponse
+                    {
+                        Id = pp.Area,
+                        Name = pp.AreaDetail.Name
+                    },
+                    Type = pp.Type,
+                    ProjectType = new GenericResponse
+                    {
+                        Id = pp.Type,
+                        Name = pp.ProjectType.Name
+                    },
+                    EstimatedAmount = pp.EstimatedAmount,
+                    EstimatedDuration = pp.EstimatedDuration,
+                    Status = pp.Status,
+                    ApprovalStatus = new GenericResponse
+                    {
+                        Id = pp.Status,
+                        Name = pp.ApprovalStatus.Name
+                    },
+                    CreateAt = pp.CreateAt,
+                    CreatedBy = pp.CreatedBy,
+                    CreatedByUser = new UserResponse
+                    {
+                        Id = pp.CreatedBy,
+                        Name = pp.CreatedByUser.Name,
+                        Email = pp.CreatedByUser.Email,
+                        Role = pp.CreatedByUser.Role,
+                        ApproverRole = new GenericResponse
+                        {
+                            Id = pp.CreatedByUser.Role,
+                            Name = pp.CreatedByUser.ApproverRole.Name
+                        }
+                    }
+                },
+                ProjectApprovalSteps = pp.ProjectApprovalSteps.OrderBy(s => s.StepOrder).ToList()
+            }).ToList();
         }
     }
 }

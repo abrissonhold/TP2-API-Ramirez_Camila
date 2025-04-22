@@ -13,7 +13,7 @@ namespace TP1_ORM_Ramirez_Camila
         {
             Console.Clear();
             Console.WriteLine("\n                           Pasos pendientes                             \n");
-            Console.WriteLine("---------------------------------------------------------------------------n");
+            Console.WriteLine("----------------------------------------------------------------------------");
 
             var user = new UserService(new UserQuery(context)).GetById(userId);
             if (user == null)

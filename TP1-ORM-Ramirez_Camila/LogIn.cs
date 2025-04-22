@@ -10,10 +10,13 @@ namespace TP1_ORM_Ramirez_Camila
     {
         public static async Task<User> IniciarSesion(AppDbContext context)
         {
+            Console.Clear();
+            Console.WriteLine("\n                           Iniciar Sesión                                \n");
+            Console.WriteLine("---------------------------------------------------------------------------n");            
+            
             User? user = null;
             var userService = new UserService(new UserQuery(context));
-            Console.WriteLine("\n                           Iniciar Sesión                                \n");
-            Console.WriteLine("---------------------------------------------------------------------------n");
+
             while (user == null)
             {
                 string email = ConsoleInputHelper.ReadEmail("Ingrese su correo: ");

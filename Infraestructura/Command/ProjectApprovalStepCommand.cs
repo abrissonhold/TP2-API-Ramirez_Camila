@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,6 +43,20 @@ namespace Infrastructure.Command
                 orden++;
             }
             return _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> UpdateStep(ProjectApprovalStep step)
+        {
+            var existingStep = await _context.ProjectApprovalStep.FindAsync(step.Id);
+            if (existingStep == null) return false;
+
+            existingStep.Status = step.Status;
+            existingStep.Observations = step.Observations;
+            existingStep.DecisionDate = step.DecisionDate;
+            existingStep.ApproverUserId = step.ApproverUserId;
+
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

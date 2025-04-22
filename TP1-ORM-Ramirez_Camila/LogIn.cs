@@ -12,11 +12,11 @@ namespace TP1_ORM_Ramirez_Camila
         {                
             User? user = null;
             var userService = new UserService(new UserQuery(context)); 
-            Console.WriteLine("\n                    Iniciar Sesión                         \n");
-            Console.WriteLine("---------------------------------------------------------\n");
+            Console.WriteLine("\n                           Iniciar Sesión                                \n");
+            Console.WriteLine("---------------------------------------------------------------------------n");
             while (user == null)
             {
-                string email = ConsoleInputHelper.LeerEmail("Ingrese su correo: ");
+                string email = ConsoleInputHelper.ReadEmail("Ingrese su correo: ");
                 user = userService.GetByMail(email);
 
                 if (user == null)
@@ -31,7 +31,6 @@ namespace TP1_ORM_Ramirez_Camila
             Console.Clear();
             Console.WriteLine($"Bienvenido, {user.Name} (Rol: {user.ApproverRole.Name})\n");
             Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Thread.Sleep(1500);
 
             return user;
         }

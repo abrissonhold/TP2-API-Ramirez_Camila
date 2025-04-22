@@ -31,6 +31,19 @@ namespace Application.Exceptions
 
             return input;
         }
+        public static string? ReadOptional(string inputMessage)
+        {
+            Console.Write(inputMessage);
+            Console.ForegroundColor = ConsoleColor.Green;
+            string input = Console.ReadLine()!;
+            Console.ResetColor();
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return null;
+            }
+
+            return input;
+        }
 
         public static int ReadInt(string inputMessage, int? min = null, int? max = null)
         {
@@ -41,7 +54,8 @@ namespace Application.Exceptions
                 Console.Write(inputMessage);
                 Console.ForegroundColor = ConsoleColor.Green;
                 isValid = int.TryParse(Console.ReadLine(), out inputNumber);
-                Console.ResetColor();
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+
 
                 if (!isValid || min != null && inputNumber < min || max != null && inputNumber > max)
                 {
@@ -80,7 +94,30 @@ namespace Application.Exceptions
             return inputValue;
         }
 
-        public static string LeerEmail(string inputMessage)
+        public static long ReadLong(string inputMessage, long? min = null, long? max = null)
+        {
+            long inputValue;
+            bool isValid;
+            do
+            {
+                Console.Write(inputMessage);
+                Console.ForegroundColor = ConsoleColor.Green;
+                isValid = !long.TryParse(Console.ReadLine(), out inputValue);
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+
+                if (!isValid || min != null && inputValue < min || max != null && inputValue > max)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Ingrese un número válido.");
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    isValid = false;
+                }
+
+            } while (!isValid);
+
+            return inputValue;
+        }
+        public static string ReadEmail(string inputMessage)
         {
             string inputEmail;
             var regex = new System.Text.RegularExpressions.Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");

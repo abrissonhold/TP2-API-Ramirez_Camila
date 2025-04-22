@@ -25,7 +25,7 @@ namespace TP1_ORM_Ramirez_Camila
             }
 
             var stepService = new ProjectApprovalStepService(
-                new ProjectApprovalStepQuery(context), 
+                new ProjectApprovalStepQuery(context),
                 new ProjectApprovalStepCommand(context));
 
             var steps = stepService.GetPendingStepsByRole(user.Role);
@@ -43,7 +43,7 @@ namespace TP1_ORM_Ramirez_Camila
             }
 
             Console.WriteLine("---------------------------------------------------------------------------\n");
-            
+
             ProjectApprovalStep? selectedStep = null;
             long selectedStepId = 0;
             while (selectedStep == null)

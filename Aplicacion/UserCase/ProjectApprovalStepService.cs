@@ -1,10 +1,5 @@
 ﻿using Application.Interfaces;
 using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UserCase
 {
@@ -21,7 +16,7 @@ namespace Application.UserCase
         public ProjectApprovalStep? GetById(long stepId)
         {
             return _query.GetById(stepId);
-        }        
+        }
         public async Task<bool> UpdateProjectApprovalStep(long selectedStepId, int decision, int userId, string? obs)
         {
             var selectedApprovalStep = GetById(selectedStepId);

@@ -1,9 +1,4 @@
-﻿using Application.Request;
-using Application.UserCase;
-using Domain.Entities;
-using Infrastructure.Command;
-using Infrastructure.Persistence;
-using Infrastructure.Query;
+﻿using Infrastructure.Persistence;
 using TP1_ORM_Ramirez_Camila;
 
 Console.ForegroundColor = ConsoleColor.DarkGreen;

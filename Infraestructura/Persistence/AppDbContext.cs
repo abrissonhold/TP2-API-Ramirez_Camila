@@ -1,6 +1,5 @@
 ﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Numerics;
 
 namespace Infrastructure.Persistence
 {
@@ -17,7 +16,7 @@ namespace Infrastructure.Persistence
         public DbSet<ApprovalRule> ApprovalRule { get; set; }
         public DbSet<ProjectProposal> ProjectProposal { get; set; }
         public DbSet<ProjectApprovalStep> ProjectApprovalStep { get; set; }
-        
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)

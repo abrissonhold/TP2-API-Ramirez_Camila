@@ -1,12 +1,6 @@
 ﻿using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Command
 {
@@ -36,7 +30,7 @@ namespace Infrastructure.Command
                     ApprovalStatus = _context.ApprovalStatus
                     .First(x => x.Id == 1),
                     StepOrder = orden,
-                    DecisionDate = null, 
+                    DecisionDate = null,
                     Observations = null
                 };
                 _context.ProjectApprovalStep.Add(step);

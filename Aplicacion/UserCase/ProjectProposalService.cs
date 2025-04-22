@@ -1,12 +1,6 @@
 ﻿using Application.Interfaces;
-using Application.Request;
 using Application.Response;
 using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UserCase
 {
@@ -22,7 +16,7 @@ namespace Application.UserCase
             _stepCommand = stepCommand;
         }
 
-        public async Task<ProjectProposalResponse> CreateProjectProposal(string title, string description, 
+        public async Task<ProjectProposalResponse> CreateProjectProposal(string title, string description,
             int area, int type, decimal estimatedAmount, int estimatedDuration, int createdBy)
         {
             ProjectProposal pp = new ProjectProposal
@@ -34,7 +28,7 @@ namespace Application.UserCase
                 EstimatedAmount = estimatedAmount,
                 EstimatedDuration = estimatedDuration,
                 Status = 1,
-                CreateAt = DateTime.Now,                
+                CreateAt = DateTime.Now,
                 CreatedBy = createdBy
             };
 

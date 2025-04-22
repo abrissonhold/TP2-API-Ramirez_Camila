@@ -28,6 +28,7 @@ namespace TP1_ORM_Ramirez_Camila
                 new ApprovalRuleQuery(context),
                 new ProjectApprovalStepCommand(context)
             );
+
             var response = await service.CreateProjectProposal(title, description, area, type, amount, duration, userId);
 
             Console.ForegroundColor = ConsoleColor.Green;

@@ -1,5 +1,6 @@
 ﻿using Application.Exceptions;
 using Application.UserCase;
+using Domain.Entities;
 using Infrastructure.Command;
 using Infrastructure.Persistence;
 using Infrastructure.Query;
@@ -8,8 +9,16 @@ namespace TP1_ORM_Ramirez_Camila
 {
     public class Opcion1
     {
-        public static async Task CrearSolicitud(AppDbContext context, int userId)
+        public static async Task CrearSolicitud(AppDbContext context, User user)
         {
+            var service = new ProjectProposalService(
+                new ProjectProposalCommand(context),
+                new ProjectProposalQuery(context),
+                new ApprovalRuleQuery(context),
+                new ProjectApprovalStepCommand(context)
+            );
+            int userId = user.Id;            
+            
             Console.Clear();
             Console.WriteLine("\n               Creación de nueva solicitud de proyecto           \n");
             Console.WriteLine("---------------------------------------------------------------------------n");
@@ -23,12 +32,6 @@ namespace TP1_ORM_Ramirez_Camila
 
             Console.WriteLine("\n---------------------------------------------------------------------------n");
 
-            var service = new ProjectProposalService(
-                new ProjectProposalCommand(context),
-                new ProjectProposalQuery(context),
-                new ApprovalRuleQuery(context),
-                new ProjectApprovalStepCommand(context)
-            );
 
             var response = await service.CreateProjectProposal(title, description, area, type, amount, duration, userId);
 

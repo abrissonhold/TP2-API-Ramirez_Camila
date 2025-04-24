@@ -1,5 +1,6 @@
 ﻿using Application.Exceptions;
 using Application.UserCase;
+using Domain.Entities;
 using Infrastructure.Command;
 using Infrastructure.Persistence;
 using Infrastructure.Query;
@@ -8,20 +9,20 @@ namespace TP1_ORM_Ramirez_Camila
 {
     public class Opcion3
     {
-        public static async Task VerEstado(AppDbContext context, int userId)
+        public static async Task VerEstado(AppDbContext context, User user)
         {
-            Console.Clear();
-            Console.WriteLine("\n                     Estado de tus proyectos                             \n");
-            Console.WriteLine("----------------------------------------------------------------------------");
-
             var service = new ProjectProposalService(
                 new ProjectProposalCommand(context),
                 new ProjectProposalQuery(context),
                 new ApprovalRuleQuery(context),
                 new ProjectApprovalStepCommand(context)
             );
-
-            var projects = service.GetDetail(userId);
+            int userId = user.Id;
+            var projects = service.GetDetail(userId);           
+            
+            Console.Clear();
+            Console.WriteLine("\n                     Estado de tus proyectos                             \n");
+            Console.WriteLine("----------------------------------------------------------------------------");
 
             if (projects.Count == 0)
             {
@@ -50,12 +51,9 @@ namespace TP1_ORM_Ramirez_Camila
                         Console.WriteLine($"    Fecha decisión: {step.DecisionDate?.ToString("dd/MM/yyyy") ?? "N/A"}");
                         Console.WriteLine($"    Observaciones: {step.Observations ?? "-"}\n");
                     }
-
-                    return;
                 }
                 Console.WriteLine("----------------------------------------------------------------------------");
             }               
-            Console.WriteLine("Fin de la consulta.");
         }
     }
 }

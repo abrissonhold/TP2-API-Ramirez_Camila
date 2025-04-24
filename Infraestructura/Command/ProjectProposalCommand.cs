@@ -26,5 +26,10 @@ namespace Infrastructure.Command
                     .ThenInclude(u => u.ApproverRole)
                 .First(p => p.Id == projectProposal.Id);
         }
+        public async Task UpdateProjectProposalStatus(ProjectProposal projectProposal)
+        {
+            _context.ProjectProposal.Update(projectProposal);
+            await _context.SaveChangesAsync();
+        }
     }
 }

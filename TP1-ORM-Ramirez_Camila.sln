@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35913.81
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TP1-ORM-Ramirez_Camila", "TP1-ORM-Ramirez_Camila\TP1-ORM-Ramirez_Camila.csproj", "{501488A2-245C-4CDA-9AE2-ADFF816C21B4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentation", "TP1-ORM-Ramirez_Camila\Presentation.csproj", "{501488A2-245C-4CDA-9AE2-ADFF816C21B4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Aplicacion\Application.csproj", "{9251A846-1F72-43D3-975C-0F3A67764372}"
 EndProject

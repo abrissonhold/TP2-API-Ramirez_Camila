@@ -45,7 +45,7 @@
             {
                 Console.Write(inputMessage);
                 Console.ForegroundColor = ConsoleColor.Green;
-                isValid = int.TryParse(Console.ReadLine(), out inputNumber);
+                isValid = int.TryParse(Console.ReadLine()!.Trim(), out inputNumber);
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
 
 
@@ -70,7 +70,7 @@
             {
                 Console.Write(inputMessage);
                 Console.ForegroundColor = ConsoleColor.Green;
-                isValid = decimal.TryParse(Console.ReadLine(), out inputValue);
+                isValid = decimal.TryParse(Console.ReadLine()!.Trim(), out inputValue);
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
 
                 if (!isValid || min != null && inputValue < min || max != null && inputValue > max)
@@ -94,7 +94,7 @@
             {
                 Console.Write(inputMessage);
                 Console.ForegroundColor = ConsoleColor.Green;
-                isValid = long.TryParse(Console.ReadLine(), out inputValue);
+                isValid = long.TryParse(Console.ReadLine()!.Trim(), out inputValue);
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
 
                 if (!isValid || min != null && inputValue < min || max != null && inputValue > max)
@@ -118,7 +118,7 @@
             {
                 Console.Write(inputMessage);
                 Console.ForegroundColor = ConsoleColor.Green;
-                inputEmail = Console.ReadLine()!;
+                inputEmail = Console.ReadLine()!.Trim(); 
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
 
                 if (!regex.IsMatch(inputEmail))

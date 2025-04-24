@@ -10,13 +10,13 @@ namespace TP1_ORM_Ramirez_Camila
     {
         public static async Task<User> IniciarSesion(AppDbContext context)
         {
+            var userService = new UserService(new UserQuery(context));            
+            User? user = null;            
+
             Console.Clear();
             Console.WriteLine("\n                           Iniciar Sesión                                \n");
             Console.WriteLine("---------------------------------------------------------------------------n");            
             
-            User? user = null;
-            var userService = new UserService(new UserQuery(context));
-
             while (user == null)
             {
                 string email = ConsoleInputHelper.ReadEmail("Ingrese su correo: ");
@@ -29,12 +29,6 @@ namespace TP1_ORM_Ramirez_Camila
                     Console.ForegroundColor = ConsoleColor.DarkGreen;
                 }
             }
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Clear();
-            Console.WriteLine($"Bienvenido, {user.Name} (Rol: {user.ApproverRole.Name})\n");
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-
             return user;
         }
     }

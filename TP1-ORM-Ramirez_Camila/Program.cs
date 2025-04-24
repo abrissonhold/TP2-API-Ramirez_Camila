@@ -1,23 +1,23 @@
-﻿using Infrastructure.Persistence;
+﻿using Domain.Entities;
+using Infrastructure.Persistence;
 using TP1_ORM_Ramirez_Camila;
 
 Console.ForegroundColor = ConsoleColor.DarkGreen;
-
 var context = new AppDbContext();
-
 var usuario = await LogIn.IniciarSesion(context);
-int userId = usuario.Id;
 
 while (true)
 {
-    (bool continuar, int newUserId) = await Menu(context, userId);
-    userId = newUserId;
+    (bool continuar, User nuevoUsuario) = await Menu(context, usuario);
+    usuario = nuevoUsuario;
     if (!continuar) break;
     Console.Clear();
 }
 
-static async Task<(bool Continuar, int NewUserId)> Menu(AppDbContext context, int userId)
+static async Task<(bool Continuar, User user)> Menu(AppDbContext context, User user)
 {
+    Console.Clear();
+    Console.WriteLine($"Bienvenido, {user.Name} ({user.ApproverRole.Name})\n");
     Console.WriteLine("*---------------------------------------------------------------------------*");
     Console.WriteLine("                                                                             ");
     Console.WriteLine("               Sistema de Aprobación de Proyectos                            ");
@@ -34,26 +34,23 @@ static async Task<(bool Continuar, int NewUserId)> Menu(AppDbContext context, in
     switch (Console.ReadLine())
     {
         case "1":
-            await Opcion1.CrearSolicitud(context, userId);
+            await Opcion1.CrearSolicitud(context, user);
             break;
         case "2":
-            await Opcion2.AprobarORechazarPaso(context, userId);
+            await Opcion2.AprobarORechazarPaso(context, user);
             break;
         case "3":
-            await Opcion3.VerEstado(context, userId);
+            await Opcion3.VerEstado(context, user);
             break;
         case "4":
-            var usuario = await LogIn.IniciarSesion(context);
-            userId = usuario.Id;
-            Console.WriteLine("\nPresione cualquier tecla para continuar...");
-            Console.ReadKey();
-            return (true, userId);
+            var nuevoUsuario = await LogIn.IniciarSesion(context);
+            return (true, nuevoUsuario);
         case "5":
             Console.Clear();
             Console.WriteLine("*---------------------------------------------------------------------------*");
             Console.WriteLine("\n          Gracias por usar nuestro sistema. ¡Hasta la próxima!           \n");
             Console.WriteLine("*---------------------------------------------------------------------------*");
-            return (false, userId);
+            return (false, user);
         default:
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("\nOpción inválida. Por favor, elija una opción del 1 al 4.");
@@ -63,5 +60,5 @@ static async Task<(bool Continuar, int NewUserId)> Menu(AppDbContext context, in
 
     Console.WriteLine("\nPresione cualquier tecla para continuar...");
     Console.ReadKey();
-    return (true, userId);
+    return (true, user);
 }

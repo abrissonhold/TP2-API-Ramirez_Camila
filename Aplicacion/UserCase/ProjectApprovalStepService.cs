@@ -7,25 +7,36 @@ namespace Application.UserCase
     {
         private readonly IProjectApprovalStepQuery _query;
         private readonly IProjectApprovalStepCommand _command;
-        public ProjectApprovalStepService(IProjectApprovalStepQuery query, IProjectApprovalStepCommand command)
+        private readonly IProjectProposalCommand _projectCommand;
+        public ProjectApprovalStepService(IProjectApprovalStepQuery query, IProjectApprovalStepCommand command, IProjectProposalCommand projectProposalCommand)
         {
             _query = query;
             _command = command;
+            _projectCommand = projectProposalCommand;
         }
 
         public ProjectApprovalStep? GetById(long stepId)
         {
             return _query.GetById(stepId);
         }
-        public async Task<bool> UpdateProjectApprovalStep(long selectedStepId, int decision, int userId, string? obs)
+        public async Task<bool> UpdateProjectApprovalStep(long stepId, int newStatus, int userId, string? obs)
         {
-            var selectedApprovalStep = GetById(selectedStepId);
-            selectedApprovalStep.Status = decision;
-            selectedApprovalStep.DecisionDate = DateTime.Now;
-            selectedApprovalStep.ApproverUserId = userId;
-            selectedApprovalStep.Observations = obs;
+            var step = GetById(stepId);
 
-            return await _command.UpdateStep(selectedApprovalStep);
+            step.Status = newStatus;
+            step.DecisionDate = DateTime.Now;
+            step.ApproverUserId = userId;
+            step.Observations = obs;
+            var actualizado = await _command.UpdateStep(step);
+            if (!actualizado) return false;
+
+            var project = step.ProjectProposal;
+            var allSteps = project.ProjectApprovalSteps;
+            if (newStatus == 3) project.Status = 3;
+            if (allSteps.All(s => s.Status == 2))  project.Status = 2;
+            await _projectCommand.UpdateProjectProposalStatus(project);
+
+            return true;
         }
         public List<ProjectApprovalStep> GetPendingStepsByRole(int roleId)
         {

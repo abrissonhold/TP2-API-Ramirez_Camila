@@ -25,9 +25,15 @@ namespace Infrastructure.Query
         public List<ProjectApprovalStep> GetPendingStepsByRole(int approverRoleId)
         {
             return _context.ProjectApprovalStep
-                .Include(p => p.ProjectProposal)
-                .Include(p => p.ApprovalStatus)
-                .Where(s => s.ApproverRoleId == approverRoleId && s.Status == 1)
+                .Where(s =>
+                    s.ApproverRoleId == approverRoleId &&
+                    s.Status == 1 &&
+                    s.ProjectProposal.Status == 1
+                )
+                .Include(s => s.ProjectProposal)
+                .Include(s => s.ApprovalStatus)
+                .Include(s => s.ApproverRole)
+                .Include(s => s.ApproverUser)
                 .OrderBy(s => s.StepOrder)
                 .ToList();
         }

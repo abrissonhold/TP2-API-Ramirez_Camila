@@ -15,7 +15,7 @@ namespace TP1_ORM_Ramirez_Camila
 
             Console.Clear();
             Console.WriteLine("\n                           Iniciar Sesión                                \n");
-            Console.WriteLine("---------------------------------------------------------------------------n");            
+            Console.WriteLine("----------------------------------------------------------------------------");            
             
             while (user == null)
             {

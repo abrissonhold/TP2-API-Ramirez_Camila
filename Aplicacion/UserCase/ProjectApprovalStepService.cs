@@ -38,9 +38,24 @@ namespace Application.UserCase
 
             return true;
         }
-        public List<ProjectApprovalStep> GetPendingStepsByRole(int roleId)
+        public List<ProjectApprovalStep> GetPendingStepsByRole(int approverRoleId)
         {
-            return _query.GetPendingStepsByRole(roleId);
+            var allSteps = _query.GetPendingStepsByRole(approverRoleId);
+
+            var validos = new List<ProjectApprovalStep>();
+
+            foreach (var step in allSteps)
+            {
+                var previousSteps = step.ProjectProposal.ProjectApprovalSteps
+                    .Where(p => p.StepOrder < step.StepOrder);
+
+                if (!previousSteps.Any() || previousSteps.All(p => p.Status == 2))
+                {
+                    validos.Add(step);
+                }
+            }
+
+            return validos;
         }
     }
 }

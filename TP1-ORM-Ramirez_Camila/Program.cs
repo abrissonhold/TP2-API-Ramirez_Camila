@@ -18,7 +18,7 @@ static async Task<(bool Continuar, User user)> Menu(AppDbContext context, User u
 {
     Console.Clear();
     Console.WriteLine($"Bienvenido, {user.Name} ({user.ApproverRole.Name})\n");
-    Console.WriteLine("*---------------------------------------------------------------------------*");
+    Console.WriteLine("-----------------------------------------------------------------------------");
     Console.WriteLine("                                                                             ");
     Console.WriteLine("               Sistema de Aprobación de Proyectos                            ");
     Console.WriteLine("                                                                             ");
@@ -28,7 +28,7 @@ static async Task<(bool Continuar, User user)> Menu(AppDbContext context, User u
     Console.WriteLine("                     4. Cambiar de usuario                                   "); 
     Console.WriteLine("                     5. Salir del sistema                                    ");
     Console.WriteLine("                                                                             ");
-    Console.WriteLine("*---------------------------------------------------------------------------*");
+    Console.WriteLine("-----------------------------------------------------------------------------");
     Console.Write("\nIngrese una opción: ");
 
     switch (Console.ReadLine())
@@ -47,9 +47,9 @@ static async Task<(bool Continuar, User user)> Menu(AppDbContext context, User u
             return (true, nuevoUsuario);
         case "5":
             Console.Clear();
-            Console.WriteLine("*---------------------------------------------------------------------------*");
+            Console.WriteLine("---------------------------------------------------------------------------");
             Console.WriteLine("\n          Gracias por usar nuestro sistema. ¡Hasta la próxima!           \n");
-            Console.WriteLine("*---------------------------------------------------------------------------*");
+            Console.WriteLine("---------------------------------------------------------------------------");
             return (false, user);
         default:
             Console.ForegroundColor = ConsoleColor.Red;

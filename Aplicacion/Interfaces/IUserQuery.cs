@@ -4,7 +4,7 @@ namespace Application.Interfaces
 {
     public interface IUserQuery
     {
-        User? GetById(int id);
+        List<User> GetAll();
         User? GetByMail(string email);
         bool Exists(string email);
     }

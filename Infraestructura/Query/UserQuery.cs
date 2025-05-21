@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces;
+using Application.Response;
 using Domain.Entities;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,13 @@ namespace Infrastructure.Query
         public UserQuery(AppDbContext context)
         {
             _context = context;
+        }
+
+        public List<User> GetAll()
+        {
+            return _context.User
+                .Include(u => u.ApproverRole)
+                .ToList();
         }
         public User? GetById(int id)
         {
@@ -31,5 +39,7 @@ namespace Infrastructure.Query
         {
             return _context.User.Any(u => u.Email == email);
         }
+
+
     }
 }

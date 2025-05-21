@@ -1,5 +1,7 @@
 ﻿using Application.Interfaces;
+using Application.Response;
 using Domain.Entities;
+using System.Threading.Tasks;
 
 namespace Application.UserCase
 {
@@ -12,17 +14,44 @@ namespace Application.UserCase
             _query = query;
         }
 
-        public User? GetById(int id)
+        public async Task<List<UserResponse>> GetAll()
         {
-            return _query.GetById(id);
-        }
-        public User? GetByMail(string email)
+            List<User> users = _query.GetAll();
+            return users.Select(users => new UserResponse
+            {
+                Id = users.Id,
+                Name = users.Name,
+                Email = users.Email,
+                Role = users.Role,
+                ApproverRole = new GenericResponse
+                {
+                    Id = users.ApproverRole.Id,
+                    Name = users.ApproverRole.Name
+                },
+            }).ToList();
+        }        
+        public UserResponse? GetByMail(string email)
         {
-            return _query.GetByMail(email);
+            User user = _query.GetByMail(email);
+            return 
+                new UserResponse
+                {
+                    Id = user.Id,
+                    Name = user.Name,
+                    Email = user.Email,
+                    Role = user.Role,
+                    ApproverRole = new GenericResponse
+                    {
+                        Id = user.ApproverRole.Id,
+                        Name = user.ApproverRole.Name
+                    },
+                };
         }
         public bool Exists(string email)
         {
             return _query.Exists(email);
         }
+
+
     }
 }

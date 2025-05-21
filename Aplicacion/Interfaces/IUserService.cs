@@ -1,11 +1,11 @@
-﻿using Domain.Entities;
+﻿using Application.Response;
 
 namespace Application.Interfaces
 {
     public interface IUserService
     {
-        User? GetById(int id);
-        User? GetByMail(string email);
+        Task<List<UserResponse>> GetAll();
+        UserResponse? GetByMail(string email);
         bool Exists(string email);
     }
 }

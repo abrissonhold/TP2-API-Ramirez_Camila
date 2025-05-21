@@ -15,31 +15,24 @@ namespace Infrastructure.Query
             _context = context;
         }
 
-        public List<User> GetAll()
+        public async Task<List<User>> GetAll()
         {
-            return _context.User
+            return await _context.User
                 .Include(u => u.ApproverRole)
-                .ToList();
-        }
-        public User? GetById(int id)
-        {
-            return _context.User
-                .Include(u => u.ApproverRole)
-                .FirstOrDefault(u => u.Id == id);
-        }
+                .ToListAsync();
 
-        public User? GetByMail(string email)
+        }
+        public async Task<User?> GetByMail(string email)
         {
-            return _context.User
+            return await _context.User
                 .Include(u => u.ApproverRole)
-                .FirstOrDefault(u => u.Email == email);
+                .FirstOrDefaultAsync(u => u.Email == email);
         }
 
         public bool Exists(string email)
         {
-            return _context.User.Any(u => u.Email == email);
+            return _context.User
+                .Any(u => u.Email == email);
         }
-
-
     }
 }

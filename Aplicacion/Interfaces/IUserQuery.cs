@@ -4,8 +4,8 @@ namespace Application.Interfaces
 {
     public interface IUserQuery
     {
-        List<User> GetAll();
-        User? GetByMail(string email);
+        Task<List<User>> GetAll();
+        Task<User?> GetByMail(string email);
         bool Exists(string email);
     }
 }

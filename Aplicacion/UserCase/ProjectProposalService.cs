@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces;
+using Application.Mappers;
 using Application.Response;
 using Domain.Entities;
 
@@ -44,96 +45,13 @@ namespace Application.UserCase
             List<ApprovalRule> rules = _ruleQuery.GetApplicableRule(pp);
             await _stepCommand.CreateProjectApprovalStep(pp, rules);
 
-            return new ProjectProposalResponse
-            {
-                Id = pp.Id,
-                Title = pp.Title,
-                Description = pp.Description,
-                Area = pp.Area,
-                AreaDetail = new GenericResponse
-                {
-                    Id = pp.Area,
-                    Name = pp.AreaDetail.Name
-                },
-                Type = pp.Type,
-                ProjectType = new GenericResponse
-                {
-                    Id = pp.Type,
-                    Name = pp.ProjectType.Name
-                },
-                EstimatedAmount = pp.EstimatedAmount,
-                EstimatedDuration = pp.EstimatedDuration,
-                Status = pp.Status,
-                ApprovalStatus = new GenericResponse
-                {
-                    Id = pp.Status,
-                    Name = pp.ApprovalStatus.Name
-                },
-                CreateAt = pp.CreateAt,
-                CreatedBy = pp.CreatedBy,
-                CreatedByUser = new UserResponse
-                {
-                    Id = pp.CreatedBy,
-                    Name = pp.CreatedByUser.Name,
-                    Email = pp.CreatedByUser.Email,
-                    Role = pp.CreatedByUser.Role,
-                    ApproverRole = new GenericResponse
-                    {
-                        Id = pp.CreatedByUser.Role,
-                        Name = pp.CreatedByUser.ApproverRole.Name
-                    }
-                },
-            };
+            return ProjectMapper.ToResponse(pp);
         }
 
         public List<ProjectProposalResponseDetail> GetDetail(int userId)
         {
             var propuestas = _query.GetByCreatorId(userId);
-
-            return propuestas.Select(pp => new ProjectProposalResponseDetail
-            {
-                ProjectProposal = new ProjectProposalResponse
-                {
-                    Id = pp.Id,
-                    Title = pp.Title,
-                    Description = pp.Description,
-                    Area = pp.Area,
-                    AreaDetail = new GenericResponse
-                    {
-                        Id = pp.Area,
-                        Name = pp.AreaDetail.Name
-                    },
-                    Type = pp.Type,
-                    ProjectType = new GenericResponse
-                    {
-                        Id = pp.Type,
-                        Name = pp.ProjectType.Name
-                    },
-                    EstimatedAmount = pp.EstimatedAmount,
-                    EstimatedDuration = pp.EstimatedDuration,
-                    Status = pp.Status,
-                    ApprovalStatus = new GenericResponse
-                    {
-                        Id = pp.Status,
-                        Name = pp.ApprovalStatus.Name
-                    },
-                    CreateAt = pp.CreateAt,
-                    CreatedBy = pp.CreatedBy,
-                    CreatedByUser = new UserResponse
-                    {
-                        Id = pp.CreatedBy,
-                        Name = pp.CreatedByUser.Name,
-                        Email = pp.CreatedByUser.Email,
-                        Role = pp.CreatedByUser.Role,
-                        ApproverRole = new GenericResponse
-                        {
-                            Id = pp.CreatedByUser.Role,
-                            Name = pp.CreatedByUser.ApproverRole.Name
-                        }
-                    }
-                },
-                ProjectApprovalSteps = pp.ProjectApprovalSteps.OrderBy(s => s.StepOrder).ToList()
-            }).ToList();
+            return ProjectMapper.ToDetailResponseList(propuestas);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces;
 using Application.Response;
+using Domain.Entities;
 using Infrastructure.Persistence;
 using System;
 using System.Collections.Generic;
@@ -16,15 +17,9 @@ namespace Infrastructure.Query
         {
             _context = context;
         }
-        public List<GenericResponse> GetAll()
+        public List<ApprovalStatus> GetAll()
         {
-            return _context.ApprovalStatus
-                .Select(a => new GenericResponse
-                {
-                    Id = a.Id,
-                    Name = a.Name,
-                })
-                .ToList();
+            return _context.ApprovalStatus.ToList();
         }
     }
 }

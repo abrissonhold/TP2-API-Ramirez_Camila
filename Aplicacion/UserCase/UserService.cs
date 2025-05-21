@@ -1,7 +1,7 @@
 ﻿using Application.Interfaces;
+using Application.Mappers;
 using Application.Response;
 using Domain.Entities;
-using System.Threading.Tasks;
 
 namespace Application.UserCase
 {
@@ -16,42 +16,17 @@ namespace Application.UserCase
 
         public async Task<List<UserResponse>> GetAll()
         {
-            List<User> users = _query.GetAll();
-            return users.Select(users => new UserResponse
-            {
-                Id = users.Id,
-                Name = users.Name,
-                Email = users.Email,
-                Role = users.Role,
-                ApproverRole = new GenericResponse
-                {
-                    Id = users.ApproverRole.Id,
-                    Name = users.ApproverRole.Name
-                },
-            }).ToList();
+            List<User> users = await _query.GetAll();
+            return UserMapper.ToResponseList(users);
         }        
-        public UserResponse? GetByMail(string email)
+        public async Task<UserResponse?> GetByMail(string email)
         {
-            User user = _query.GetByMail(email);
-            return 
-                new UserResponse
-                {
-                    Id = user.Id,
-                    Name = user.Name,
-                    Email = user.Email,
-                    Role = user.Role,
-                    ApproverRole = new GenericResponse
-                    {
-                        Id = user.ApproverRole.Id,
-                        Name = user.ApproverRole.Name
-                    },
-                };
+            User user = await _query.GetByMail(email);
+            return user != null ? UserMapper.ToResponse(user) : null;
         }
         public bool Exists(string email)
         {
             return _query.Exists(email);
         }
-
-
     }
 }

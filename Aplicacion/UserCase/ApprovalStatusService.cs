@@ -1,5 +1,7 @@
 ﻿using Application.Interfaces;
+using Application.Mappers;
 using Application.Response;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +19,8 @@ namespace Application.UserCase
         }
         public Task<List<GenericResponse>> GetAll()
         {
-            return Task.FromResult(_query.GetAll());
+            List<GenericResponse> response = GenericMapper.ToResponseList(_query.GetAll());
+            return Task.FromResult(response);
         }
     }
 }

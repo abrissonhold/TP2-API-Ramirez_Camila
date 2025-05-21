@@ -5,7 +5,7 @@ namespace Application.Interfaces
     public interface IUserService
     {
         Task<List<UserResponse>> GetAll();
-        UserResponse? GetByMail(string email);
+        Task<UserResponse?> GetByMail(string email);
         bool Exists(string email);
     }
 }

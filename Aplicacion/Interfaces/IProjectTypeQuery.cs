@@ -1,4 +1,5 @@
 ﻿using Application.Response;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace Application.Interfaces
 {
     public interface IProjectTypeQuery
     {
-        public List<GenericResponse> GetAll();
+        public List<ProjectType> GetAll();
     }
 }

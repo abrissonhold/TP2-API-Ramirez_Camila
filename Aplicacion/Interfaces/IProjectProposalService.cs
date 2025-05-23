@@ -10,5 +10,8 @@ namespace Application.Interfaces
         public List<ProjectProposalResponseDetail> GetDetailByUserId(int userId);
         public Task<ProjectProposalResponseDetail> GetById(Guid id);
         public bool ExistingProject(string title);
+        Task<ProjectProposalResponseDetail> ProcessDecision(Guid projectId, int stepId, int userId, int status, string? observation);
+        Task<ProjectProposalResponseDetail?> UpdateProject(Guid id, string title, string description, int duration);
+
     }
 }

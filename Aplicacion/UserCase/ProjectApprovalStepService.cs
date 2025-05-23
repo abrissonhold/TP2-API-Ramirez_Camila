@@ -42,7 +42,7 @@ namespace Application.UserCase
         {
             var allSteps = _query.GetPendingStepsByRole(approverRoleId);
 
-            var validos = new List<ProjectApprovalStep>();
+            var valid = new List<ProjectApprovalStep>();
 
             foreach (var step in allSteps)
             {
@@ -51,11 +51,11 @@ namespace Application.UserCase
 
                 if (!previousSteps.Any() || previousSteps.All(p => p.Status == 2))
                 {
-                    validos.Add(step);
+                    valid.Add(step);
                 }
             }
 
-            return validos;
+            return valid;
         }
     }
 }

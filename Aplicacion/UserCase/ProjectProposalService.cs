@@ -12,23 +12,25 @@ namespace Application.UserCase
         private readonly IProjectProposalQuery _query;
         private readonly IApprovalRuleQuery _ruleQuery;
         private readonly IProjectApprovalStepCommand _stepCommand;
+        private readonly IProjectApprovalStepService _stepService;
 
         public ProjectProposalService(
             IProjectProposalCommand command, 
             IProjectProposalQuery query, 
             IApprovalRuleQuery ruleQuery, 
-            IProjectApprovalStepCommand stepCommand)
+            IProjectApprovalStepCommand stepCommand,
+            IProjectApprovalStepService stepService)
         {
             _command = command;
             _query = query;
             _ruleQuery = ruleQuery;
             _stepCommand = stepCommand;
+            _stepService = stepService;
         }
 
         public async Task<ProjectProposalResponseDetail> CreateProjectProposal(string title, string description,
             int area, int type, decimal estimatedAmount, int estimatedDuration, int createdBy)
         {
-
             ProjectProposal pp = new ProjectProposal
             {
                 Title = title,
@@ -71,6 +73,31 @@ namespace Application.UserCase
         public bool ExistingProject(string title)
         {
             return _query.ExistsByTitle(title);
+        }
+
+        public async Task<ProjectProposalResponseDetail> ProcessDecision(Guid projectId, int stepId, int userId, int status, string? observation)
+        {
+            var updated = await _stepService.UpdateProjectApprovalStep(stepId, status, userId, observation);
+            if (!updated) return null;
+
+            var updatedProject = await _query.GetById(projectId);
+            if (updatedProject == null) return null;
+
+            return ProjectMapper.ToDetailResponse(updatedProject);
+        }
+        public async Task<ProjectProposalResponseDetail?> UpdateProject(Guid id, string title, string description, int duration)
+        {
+            var proposal = await _query.GetById(id);
+            if (proposal == null) return null;
+
+            if (proposal.Status != 1) return ProjectProposalResponseDetail.Conflict;
+
+            proposal.Title = title;
+            proposal.Description = description;
+            proposal.EstimatedDuration = duration;
+
+            await _command.UpdateProjectProposal(proposal);
+            return ProjectMapper.ToDetailResponse(proposal);
         }
     }
 }

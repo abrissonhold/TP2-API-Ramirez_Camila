@@ -27,6 +27,11 @@ namespace Infrastructure.Command
                 .FirstAsync(p => p.Id == projectProposal.Id);
             return result;    
         }
+        public async Task UpdateProjectProposal(ProjectProposal project)
+        {
+            _context.ProjectProposal.Update(project);
+            await _context.SaveChangesAsync();
+        }
         public async Task UpdateProjectProposalStatus(ProjectProposal projectProposal)
         {
             _context.ProjectProposal.Update(projectProposal);

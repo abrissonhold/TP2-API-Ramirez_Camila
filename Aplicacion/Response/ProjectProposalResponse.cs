@@ -30,5 +30,10 @@ namespace Application.Response
     {
         public ProjectProposalResponse ProjectProposal { get; set; } = null!;
         public ICollection<ShortApprovalStepResponse> Steps { get; set; } = new List<ShortApprovalStepResponse>();
+        public static ProjectProposalResponseDetail Conflict => new ProjectProposalResponseDetail
+        {
+            ProjectProposal = null!,
+            Steps = []
+        };
     }
 }

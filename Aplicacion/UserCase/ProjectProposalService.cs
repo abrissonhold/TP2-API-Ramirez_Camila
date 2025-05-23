@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using Application.Exceptions;
+using Application.Interfaces;
 using Application.Mappers;
 using Application.Response;
 using Domain.Entities;
@@ -24,9 +25,10 @@ namespace Application.UserCase
             _stepCommand = stepCommand;
         }
 
-        public async Task<ProjectProposalResponse> CreateProjectProposal(string title, string description,
+        public async Task<ProjectProposalResponseDetail> CreateProjectProposal(string title, string description,
             int area, int type, decimal estimatedAmount, int estimatedDuration, int createdBy)
         {
+
             ProjectProposal pp = new ProjectProposal
             {
                 Title = title,
@@ -40,18 +42,35 @@ namespace Application.UserCase
                 CreatedBy = createdBy
             };
 
-            pp = await _command.CreateProjectProposal(pp);
+            ProjectProposal projectProposal = await _command.CreateProjectProposal(pp);
 
             List<ApprovalRule> rules = _ruleQuery.GetApplicableRule(pp);
             await _stepCommand.CreateProjectApprovalStep(pp, rules);
 
-            return ProjectMapper.ToResponse(pp);
+            return ProjectMapper.ToDetailResponse(pp);
         }
 
-        public List<ProjectProposalResponseDetail> GetDetail(int userId)
+        public async Task<List<ProjectShortResponse>> Search(string? title, int? status, int? applicant, int? approverUser)
+        {
+            var proposals = await _query.GetByFilters(title, status, applicant, approverUser);
+            return ProjectMapper.ToShortResponseList(proposals);
+        }        
+        
+        public List<ProjectProposalResponseDetail> GetDetailByUserId(int userId)
         {
             var propuestas = _query.GetByCreatorId(userId);
-            return ProjectMapper.ToDetailResponseList(propuestas);
+            return ProjectMapper.ToDetailResponseList(propuestas.Result);
+        }
+
+        public async Task<ProjectProposalResponseDetail> GetById(Guid id)
+        {
+            var proposal = await _query.GetById(id);
+            return ProjectMapper.ToDetailResponse(proposal);
+        }
+
+        public bool ExistingProject(string title)
+        {
+            return _query.ExistsByTitle(title);
         }
     }
 }

@@ -18,13 +18,14 @@ namespace Infrastructure.Command
         {
             _context.ProjectProposal.Add(projectProposal);
             await _context.SaveChangesAsync();
-            return _context.ProjectProposal
+            var result = await _context.ProjectProposal
                 .Include(p => p.AreaDetail)
                 .Include(p => p.ProjectType)
                 .Include(p => p.ApprovalStatus)
                 .Include(p => p.CreatedByUser)
                     .ThenInclude(u => u.ApproverRole)
-                .First(p => p.Id == projectProposal.Id);
+                .FirstAsync(p => p.Id == projectProposal.Id);
+            return result;    
         }
         public async Task UpdateProjectProposalStatus(ProjectProposal projectProposal)
         {

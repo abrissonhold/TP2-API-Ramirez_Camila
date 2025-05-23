@@ -7,6 +7,7 @@ namespace Application.Mappers
     {
         public static UserResponse ToResponse(User user)
         {
+            if (user == null) return null;
             return new UserResponse
             {
                 Id = user.Id,

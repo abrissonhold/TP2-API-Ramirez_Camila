@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Command
 {
@@ -13,11 +14,12 @@ namespace Infrastructure.Command
             _context = context;
         }
 
-        public Task CreateProjectApprovalStep(ProjectProposal projectProposal, List<ApprovalRule> rules)
+        public async Task CreateProjectApprovalStep(ProjectProposal projectProposal, List<ApprovalRule> rules)
         {
             int orden = 1;
             foreach (var rule in rules)
             {
+                var pendingStatus = await _context.ApprovalStatus.FirstAsync(x => x.Id == 1);
                 var step = new ProjectApprovalStep
                 {
                     ProjectProposalId = projectProposal.Id,
@@ -27,16 +29,15 @@ namespace Infrastructure.Command
                     ApproverRoleId = rule.ApproverRoleId,
                     ApproverRole = rule.ApproverRole,
                     Status = 1,
-                    ApprovalStatus = _context.ApprovalStatus
-                    .First(x => x.Id == 1),
+                    ApprovalStatus = pendingStatus,
                     StepOrder = orden,
                     DecisionDate = null,
                     Observations = null
                 };
-                _context.ProjectApprovalStep.Add(step);
+                 _context.ProjectApprovalStep.Add(step);
                 orden++;
             }
-            return _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         public async Task<bool> UpdateStep(ProjectApprovalStep step)

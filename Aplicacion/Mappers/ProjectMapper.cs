@@ -5,6 +5,25 @@ namespace Application.Mappers
 {
     public static class ProjectMapper
     {
+        public static ProjectShortResponse ToShortResponse(ProjectProposal p)
+        {
+            return new ProjectShortResponse
+            {
+                Id = p.Id,
+                Title = p.Title,
+                Description = p.Description,
+                Amount = p.EstimatedAmount,
+                Duration = p.EstimatedDuration,
+                Area = p.AreaDetail.Name,
+                Status = p.ApprovalStatus.Name,
+                Type = p.ProjectType.Name
+            };
+        }
+        public static List<ProjectShortResponse> ToShortResponseList(List<ProjectProposal> projects)
+        {
+            return projects.Select(p => ToShortResponse(p)).ToList();
+        }
+
         public static ProjectProposalResponse ToResponse(ProjectProposal p)
         {
             return new ProjectProposalResponse
@@ -12,30 +31,27 @@ namespace Application.Mappers
                 Id = p.Id,
                 Title = p.Title,
                 Description = p.Description,
-                Area = p.Area,
-                AreaDetail = GenericMapper.ToResponse(p.AreaDetail),
-                Type = p.Type,
-                ProjectType = GenericMapper.ToResponse(p.ProjectType),
+                Area = GenericMapper.ToResponse(p.AreaDetail),
+                Type = GenericMapper.ToResponse(p.ProjectType),
                 EstimatedAmount = p.EstimatedAmount,
                 EstimatedDuration = p.EstimatedDuration,
-                Status = p.Status,
-                ApprovalStatus = GenericMapper.ToResponse(p.ApprovalStatus),
-                CreateAt = p.CreateAt,
-                CreatedBy = p.CreatedBy,
-                CreatedByUser = UserMapper.ToResponse(p.CreatedByUser)
+                Status = GenericMapper.ToResponse(p.ApprovalStatus),
+                User = UserMapper.ToResponse(p.CreatedByUser),
             };
         }
-
         public static List<ProjectProposalResponse> ToResponseList(List<ProjectProposal> projects)
         {
             return projects.Select(p => ToResponse(p)).ToList();
         }
+
         public static ProjectProposalResponseDetail ToDetailResponse(ProjectProposal p)
         {
             return new ProjectProposalResponseDetail
             {
                 ProjectProposal = ToResponse(p),
-                ProjectApprovalSteps = p.ProjectApprovalSteps.OrderBy(s => s.StepOrder).ToList()
+                Steps = p.ProjectApprovalSteps
+                    .Select(s => StepMapper.ToShortResponse(s))
+                    .OrderBy(s => s.StepOrder).ToList()
             };
         }
         public static List<ProjectProposalResponseDetail> ToDetailResponseList(List<ProjectProposal> projects)

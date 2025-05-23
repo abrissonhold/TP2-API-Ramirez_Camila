@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Query
 {
@@ -13,7 +14,10 @@ namespace Infrastructure.Query
         }
         public List<ApprovalRule> GetApplicableRule(ProjectProposal projectProposal)
         {
-            var applicableRules = _context.ApprovalRule
+            List<ApprovalRule> applicableRules = _context.ApprovalRule
+                .Include(r => r.ApproverRole)
+                .Include(r => r.AreaDetail)
+                .Include(r => r.ProjectType)
                 .Where(r =>
                     (r.Type == null || r.Type == projectProposal.Type) &&
                     (r.Area == null || r.Area == projectProposal.Area) &&
@@ -22,7 +26,7 @@ namespace Infrastructure.Query
                 )
                 .ToList();
 
-            var FilteredApprovalRules = applicableRules
+            List<ApprovalRule> FilteredApprovalRules = applicableRules
                 .GroupBy(r => r.StepOrder)
                 .Select(groupedRules => groupedRules
                     .OrderByDescending(r =>

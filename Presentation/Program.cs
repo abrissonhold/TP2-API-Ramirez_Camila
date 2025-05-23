@@ -4,15 +4,29 @@ using Infrastructure.Command;
 using Infrastructure.Persistence;
 using Infrastructure.Query;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
+using Presentation.Examples;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Solicitud de Proyecto",
+        Description = "API para la gestión y aprobación de solicitudes de proyectos"
+    });
+    options.ExampleFilters();
+});
+builder.Services.AddSwaggerExamplesFromAssemblyOf<ApiErrorExample>(); 
 
 var connectionString = builder.Configuration["ConnectionString"];
-builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(connectionString));
+builder.Services.AddDbContext<AppDbContext>(opt => 
+                            opt.UseSqlServer(connectionString));
 
 builder.Services.AddTransient<IProjectProposalService, ProjectProposalService>();
 builder.Services.AddTransient<IProjectProposalCommand, ProjectProposalCommand>();

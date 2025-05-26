@@ -16,6 +16,6 @@
         public DateTime CreateAt { get; set; }
         public int CreatedBy { get; set; }
         public User CreatedByUser { get; set; } = null!;
-        public ICollection<ProjectApprovalStep> ProjectApprovalSteps { get; set; } = new List<ProjectApprovalStep>();
+        public ICollection<ProjectApprovalStep> ProjectApprovalSteps { get; set; } = [];
     }
 }

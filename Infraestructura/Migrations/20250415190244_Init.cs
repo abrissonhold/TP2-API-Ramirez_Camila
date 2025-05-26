@@ -2,7 +2,6 @@
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
 namespace Infrastructure.Migrations
 {
@@ -12,7 +11,7 @@ namespace Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "ApprovalStatus",
                 columns: table => new
                 {
@@ -22,10 +21,10 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ApprovalStatus", x => x.Id);
+                    _ = table.PrimaryKey("PK_ApprovalStatus", x => x.Id);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "ApproverRole",
                 columns: table => new
                 {
@@ -35,10 +34,10 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ApproverRole", x => x.Id);
+                    _ = table.PrimaryKey("PK_ApproverRole", x => x.Id);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "Area",
                 columns: table => new
                 {
@@ -48,10 +47,10 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Area", x => x.Id);
+                    _ = table.PrimaryKey("PK_Area", x => x.Id);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "ProjectType",
                 columns: table => new
                 {
@@ -61,10 +60,10 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProjectType", x => x.Id);
+                    _ = table.PrimaryKey("PK_ProjectType", x => x.Id);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "User",
                 columns: table => new
                 {
@@ -76,8 +75,8 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User", x => x.Id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_User", x => x.Id);
+                    _ = table.ForeignKey(
                         name: "FK_User_ApproverRole_Role",
                         column: x => x.Role,
                         principalTable: "ApproverRole",
@@ -85,7 +84,7 @@ namespace Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "ApprovalRule",
                 columns: table => new
                 {
@@ -100,26 +99,26 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ApprovalRule", x => x.Id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_ApprovalRule", x => x.Id);
+                    _ = table.ForeignKey(
                         name: "FK_ApprovalRule_ApproverRole_ApproverRoleId",
                         column: x => x.ApproverRoleId,
                         principalTable: "ApproverRole",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "FK_ApprovalRule_Area_Area",
                         column: x => x.Area,
                         principalTable: "Area",
                         principalColumn: "Id");
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "FK_ApprovalRule_ProjectType_Type",
                         column: x => x.Type,
                         principalTable: "ProjectType",
                         principalColumn: "Id");
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "ProjectProposal",
                 columns: table => new
                 {
@@ -136,26 +135,26 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProjectProposal", x => x.Id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_ProjectProposal", x => x.Id);
+                    _ = table.ForeignKey(
                         name: "FK_ProjectProposal_ApprovalStatus_Status",
                         column: x => x.Status,
                         principalTable: "ApprovalStatus",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "FK_ProjectProposal_Area_Area",
                         column: x => x.Area,
                         principalTable: "Area",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "FK_ProjectProposal_ProjectType_Type",
                         column: x => x.Type,
                         principalTable: "ProjectType",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "FK_ProjectProposal_User_CreatedBy",
                         column: x => x.CreatedBy,
                         principalTable: "User",
@@ -163,7 +162,7 @@ namespace Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "ProjectApprovalStep",
                 columns: table => new
                 {
@@ -179,33 +178,33 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProjectApprovalStep", x => x.Id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_ProjectApprovalStep", x => x.Id);
+                    _ = table.ForeignKey(
                         name: "FK_ProjectApprovalStep_ApprovalStatus_Status",
                         column: x => x.Status,
                         principalTable: "ApprovalStatus",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "FK_ProjectApprovalStep_ApproverRole_ApproverRoleId",
                         column: x => x.ApproverRoleId,
                         principalTable: "ApproverRole",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "FK_ProjectApprovalStep_ProjectProposal_ProjectProposalId",
                         column: x => x.ProjectProposalId,
                         principalTable: "ProjectProposal",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "FK_ProjectApprovalStep_User_ApproverUserId",
                         column: x => x.ApproverUserId,
                         principalTable: "User",
                         principalColumn: "Id");
                 });
 
-            migrationBuilder.InsertData(
+            _ = migrationBuilder.InsertData(
                 table: "ApprovalStatus",
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
@@ -216,7 +215,7 @@ namespace Infrastructure.Migrations
                     { 4, "Observed" }
                 });
 
-            migrationBuilder.InsertData(
+            _ = migrationBuilder.InsertData(
                 table: "ApproverRole",
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
@@ -227,7 +226,7 @@ namespace Infrastructure.Migrations
                     { 4, "Comité Técnico" }
                 });
 
-            migrationBuilder.InsertData(
+            _ = migrationBuilder.InsertData(
                 table: "Area",
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
@@ -238,7 +237,7 @@ namespace Infrastructure.Migrations
                     { 4, "Operaciones" }
                 });
 
-            migrationBuilder.InsertData(
+            _ = migrationBuilder.InsertData(
                 table: "ProjectType",
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
@@ -249,7 +248,7 @@ namespace Infrastructure.Migrations
                     { 4, "Capacitación Interna" }
                 });
 
-            migrationBuilder.InsertData(
+            _ = migrationBuilder.InsertData(
                 table: "ApprovalRule",
                 columns: new[] { "Id", "ApproverRoleId", "Area", "MaxAmount", "MinAmount", "StepOrder", "Type" },
                 values: new object[,]
@@ -266,7 +265,7 @@ namespace Infrastructure.Migrations
                     { 10L, 4, null, 50000m, 0m, 1, 4 }
                 });
 
-            migrationBuilder.InsertData(
+            _ = migrationBuilder.InsertData(
                 table: "User",
                 columns: new[] { "Id", "Email", "Name", "Role" },
                 values: new object[,]
@@ -279,62 +278,62 @@ namespace Infrastructure.Migrations
                     { 6, "ggalli@unaj.com", "Gabriel Galli", 4 }
                 });
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_ApprovalRule_ApproverRoleId",
                 table: "ApprovalRule",
                 column: "ApproverRoleId");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_ApprovalRule_Area",
                 table: "ApprovalRule",
                 column: "Area");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_ApprovalRule_Type",
                 table: "ApprovalRule",
                 column: "Type");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_ProjectApprovalStep_ApproverRoleId",
                 table: "ProjectApprovalStep",
                 column: "ApproverRoleId");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_ProjectApprovalStep_ApproverUserId",
                 table: "ProjectApprovalStep",
                 column: "ApproverUserId");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_ProjectApprovalStep_ProjectProposalId",
                 table: "ProjectApprovalStep",
                 column: "ProjectProposalId");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_ProjectApprovalStep_Status",
                 table: "ProjectApprovalStep",
                 column: "Status");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_ProjectProposal_Area",
                 table: "ProjectProposal",
                 column: "Area");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_ProjectProposal_CreatedBy",
                 table: "ProjectProposal",
                 column: "CreatedBy");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_ProjectProposal_Status",
                 table: "ProjectProposal",
                 column: "Status");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_ProjectProposal_Type",
                 table: "ProjectProposal",
                 column: "Type");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_User_Role",
                 table: "User",
                 column: "Role");
@@ -343,28 +342,28 @@ namespace Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "ApprovalRule");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "ProjectApprovalStep");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "ProjectProposal");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "ApprovalStatus");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "Area");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "ProjectType");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "User");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "ApproverRole");
         }
     }

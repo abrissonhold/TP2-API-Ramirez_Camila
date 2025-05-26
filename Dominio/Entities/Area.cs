@@ -4,8 +4,8 @@
     {
         public int Id { get; set; }
         public required string Name { get; set; }
-        public ICollection<ProjectProposal> ProjectProposals { get; set; } = new List<ProjectProposal>();
-        public ICollection<ApprovalRule> ApprovalRules { get; set; } = new List<ApprovalRule>();
+        public ICollection<ProjectProposal> ProjectProposals { get; set; } = [];
+        public ICollection<ApprovalRule> ApprovalRules { get; set; } = [];
 
     }
 }

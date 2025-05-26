@@ -16,26 +16,26 @@ namespace Infrastructure.Command
 
         public async Task<ProjectProposal> CreateProjectProposal(ProjectProposal projectProposal)
         {
-            _context.ProjectProposal.Add(projectProposal);
-            await _context.SaveChangesAsync();
-            var result = await _context.ProjectProposal
+            _ = _context.ProjectProposal.Add(projectProposal);
+            _ = await _context.SaveChangesAsync();
+            ProjectProposal result = await _context.ProjectProposal
                 .Include(p => p.AreaDetail)
                 .Include(p => p.ProjectType)
                 .Include(p => p.ApprovalStatus)
                 .Include(p => p.CreatedByUser)
                     .ThenInclude(u => u.ApproverRole)
                 .FirstAsync(p => p.Id == projectProposal.Id);
-            return result;    
+            return result;
         }
         public async Task UpdateProjectProposal(ProjectProposal project)
         {
-            _context.ProjectProposal.Update(project);
-            await _context.SaveChangesAsync();
+            _ = _context.ProjectProposal.Update(project);
+            _ = await _context.SaveChangesAsync();
         }
         public async Task UpdateProjectProposalStatus(ProjectProposal projectProposal)
         {
-            _context.ProjectProposal.Update(projectProposal);
-            await _context.SaveChangesAsync();
+            _ = _context.ProjectProposal.Update(projectProposal);
+            _ = await _context.SaveChangesAsync();
         }
     }
 }

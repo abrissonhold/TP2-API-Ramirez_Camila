@@ -15,9 +15,9 @@ namespace Application.UserCase
         private readonly IProjectApprovalStepService _stepService;
 
         public ProjectProposalService(
-            IProjectProposalCommand command, 
-            IProjectProposalQuery query, 
-            IApprovalRuleQuery ruleQuery, 
+            IProjectProposalCommand command,
+            IProjectProposalQuery query,
+            IApprovalRuleQuery ruleQuery,
             IProjectApprovalStepCommand stepCommand,
             IProjectApprovalStepService stepService)
         {
@@ -31,7 +31,7 @@ namespace Application.UserCase
         public async Task<ProjectProposalResponseDetail> CreateProjectProposal(string title, string description,
             int area, int type, decimal estimatedAmount, int estimatedDuration, int createdBy)
         {
-            ProjectProposal pp = new ProjectProposal
+            ProjectProposal pp = new()
             {
                 Title = title,
                 Description = description,
@@ -43,8 +43,7 @@ namespace Application.UserCase
                 CreateAt = DateTime.Now,
                 CreatedBy = createdBy
             };
-
-            ProjectProposal projectProposal = await _command.CreateProjectProposal(pp);
+            _ = await _command.CreateProjectProposal(pp);
 
             List<ApprovalRule> rules = _ruleQuery.GetApplicableRule(pp);
             await _stepCommand.CreateProjectApprovalStep(pp, rules);
@@ -54,19 +53,19 @@ namespace Application.UserCase
 
         public async Task<List<ProjectShortResponse>> Search(string? title, int? status, int? applicant, int? approverUser)
         {
-            var proposals = await _query.GetByFilters(title, status, applicant, approverUser);
+            List<ProjectProposal> proposals = await _query.GetByFilters(title, status, applicant, approverUser);
             return ProjectMapper.ToShortResponseList(proposals);
-        }        
-        
+        }
+
         public List<ProjectProposalResponseDetail> GetDetailByUserId(int userId)
         {
-            var propuestas = _query.GetByCreatorId(userId);
+            Task<List<ProjectProposal>> propuestas = _query.GetByCreatorId(userId);
             return ProjectMapper.ToDetailResponseList(propuestas.Result);
         }
 
         public async Task<ProjectProposalResponseDetail> GetById(Guid id)
         {
-            var proposal = await _query.GetById(id);
+            ProjectProposal proposal = await _query.GetById(id);
             return ProjectMapper.ToDetailResponse(proposal);
         }
 
@@ -75,27 +74,49 @@ namespace Application.UserCase
             return _query.ExistsByTitle(title);
         }
 
-        public async Task<ProjectProposalResponseDetail> ProcessDecision(Guid projectId, int stepId, int userId, int status, string? observation)
+        public async Task<ProjectProposalResponseDetail?> ProcessDecision(Guid projectId, int stepId, int userId, int status, string? observation)
         {
-            var updatedProject = await _query.GetById(projectId);
-            if (updatedProject.Status != 1) return null;
+            ProjectProposal project = await _query.GetById(projectId);
+            if (project.Status != 1)
+            {
+                return null;
+            }
 
-            stepId = (int)updatedProject.ProjectApprovalSteps.First(s => s.Id == stepId).Id;
+            ProjectApprovalStep step = project.ProjectApprovalSteps.First(s => s.StepOrder == stepId);
+            if (step == null)
+            {
+                throw new Conflict("No existe un paso con ese orden para este proyecto.");
+            }
 
-            var updated = await _stepService.UpdateProjectApprovalStep(stepId, status, userId, observation);
-            if (!updated) throw new Exception("El paso no fue actualizado");
+            stepId = (int)step.Id;
 
+            bool updated = await _stepService.UpdateProjectApprovalStep(stepId, status, userId, observation);
+            if (!updated)
+            {
+                throw new Exception("El paso no fue actualizado");
+            }
+
+            ProjectProposal updatedProject = await _query.GetById(project.Id);
             return ProjectMapper.ToDetailResponse(updatedProject);
         }
+
         public async Task<ProjectProposalResponseDetail?> UpdateProject(Guid id, string title, string description, int duration)
         {
-            var proposal = await _query.GetById(id);
-            if (proposal == null) return null;
+            ProjectProposal proposal = await _query.GetById(id);
+            if (proposal == null)
+            {
+                return null;
+            }
 
             if (ExistingProject(title))
+            {
                 throw new Conflict("Ya existe un proyecto creado con ese nombre. ");
+            }
+
             if (proposal.Status != 4)
+            {
                 throw new Conflict("Solo se puede editar un proyecto con estado observado.");
+            }
 
             proposal.Title = title;
             proposal.Description = description;

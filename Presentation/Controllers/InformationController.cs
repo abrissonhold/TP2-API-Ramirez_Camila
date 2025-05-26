@@ -1,6 +1,5 @@
 ﻿using Application.Interfaces;
 using Application.Response;
-using Application.UserCase;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Examples;
 using Swashbuckle.AspNetCore.Filters;
@@ -34,54 +33,54 @@ namespace Presentation.Controllers
         [SwaggerResponseExample(StatusCodes.Status200OK, typeof(AreaExample))]
         public async Task<ActionResult<List<GenericResponse>>> GetAreas()
         {
-            var areas = await areaService.GetAll();
+            List<GenericResponse> areas = await areaService.GetAll();
             return Ok(areas);
         }
         /// <summary>
-        /// Listado de tipos de proyecto disponibles
+        /// Listado de tipos de proyectos
         /// </summary>
         [HttpGet("ProjectType")]
         [ProducesResponseType(typeof(List<GenericResponse>), StatusCodes.Status200OK)]
         [SwaggerResponseExample(StatusCodes.Status200OK, typeof(ProjectTypeExample))]
         public async Task<ActionResult<List<GenericResponse>>> GetProjectTypes()
         {
-            var types = await projectTypeService.GetAll();
+            List<GenericResponse> types = await projectTypeService.GetAll();
             return Ok(types);
         }
 
         /// <summary>
-        /// Listado de roles disponibles
+        /// Listado de roles de usuario
         /// </summary>
         [HttpGet("Role")]
         [ProducesResponseType(typeof(List<GenericResponse>), StatusCodes.Status200OK)]
         [SwaggerResponseExample(StatusCodes.Status200OK, typeof(RoleExample))]
         public async Task<ActionResult<List<GenericResponse>>> GetRoles()
         {
-            var roles = await roleService.GetAll();
+            List<GenericResponse> roles = await roleService.GetAll();
             return Ok(roles);
         }
 
         /// <summary>
-        /// Listado de estados de aprobación
+        /// Listado de estados para una solicitud de proyecto y pasos de aprobación
         /// </summary>
         [HttpGet("ApprovalStatus")]
         [ProducesResponseType(typeof(List<GenericResponse>), StatusCodes.Status200OK)]
         [SwaggerResponseExample(StatusCodes.Status200OK, typeof(ApprovalStatusExample))]
         public async Task<ActionResult<List<GenericResponse>>> GetApprovalStatus()
         {
-            var statuses = await approvalStatusService.GetAll();
+            List<GenericResponse> statuses = await approvalStatusService.GetAll();
             return Ok(statuses);
         }
 
         /// <summary>
-        /// Listado de usuarios del sistema
+        /// Listado de usuarios
         /// </summary>
         [HttpGet("User")]
         [ProducesResponseType(typeof(List<UserResponse>), StatusCodes.Status200OK)]
         [SwaggerResponseExample(StatusCodes.Status200OK, typeof(UserResponseExample))]
         public async Task<ActionResult<List<UserResponse>>> GetUsers()
         {
-            var users = await userService.GetAll();
+            List<UserResponse> users = await userService.GetAll();
             return Ok(users);
         }
     }

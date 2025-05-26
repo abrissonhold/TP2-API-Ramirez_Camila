@@ -5,10 +5,10 @@ using Infrastructure.Persistence;
 using Infrastructure.Query;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Filters;
 using Presentation.Examples;
+using Swashbuckle.AspNetCore.Filters;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
@@ -21,14 +21,14 @@ builder.Services.AddSwaggerGen(options =>
         Description = "API para la gestión y aprobación de solicitudes de proyectos"
     });
     options.ExampleFilters();
-    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    string xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     options.IncludeXmlComments(xmlPath);
 });
-builder.Services.AddSwaggerExamplesFromAssemblyOf<ApiErrorExample>(); 
+builder.Services.AddSwaggerExamplesFromAssemblyOf<ApiErrorExample>();
 
-var connectionString = builder.Configuration["ConnectionString"];
-builder.Services.AddDbContext<AppDbContext>(opt => 
+string? connectionString = builder.Configuration["ConnectionString"];
+builder.Services.AddDbContext<AppDbContext>(opt =>
                             opt.UseSqlServer(connectionString));
 
 builder.Services.AddTransient<IProjectProposalService, ProjectProposalService>();
@@ -56,12 +56,12 @@ builder.Services.AddTransient<IRoleQuery, RoleQuery>();
 builder.Services.AddTransient<IApprovalStatusService, ApprovalStatusService>();
 builder.Services.AddTransient<IApprovalStatusQuery, ApprovalStatusQuery>();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    _ = app.UseSwagger();
+    _ = app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();

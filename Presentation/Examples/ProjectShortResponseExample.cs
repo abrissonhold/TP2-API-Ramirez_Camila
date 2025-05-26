@@ -1,7 +1,5 @@
 ﻿using Application.Response;
 using Swashbuckle.AspNetCore.Filters;
-using System;
-using System.Collections.Generic;
 
 namespace Presentation.Examples
 {
@@ -9,8 +7,8 @@ namespace Presentation.Examples
     {
         public List<ProjectShortResponse> GetExamples()
         {
-            return new List<ProjectShortResponse>
-            {
+            return
+            [
                 new ProjectShortResponse
                 {
                     Id = Guid.Parse("123e4567-e89b-12d3-a456-426614174000"),
@@ -33,7 +31,7 @@ namespace Presentation.Examples
                     Status = "Aprobado",
                     Type = "Mejora de Procesos"
                 }
-            };
+            ];
         }
     }
 }

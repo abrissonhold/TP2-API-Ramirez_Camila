@@ -7,8 +7,8 @@ namespace Presentation.Examples
     {
         public List<UserResponse> GetExamples()
         {
-            return new List<UserResponse>
-            {
+            return
+            [
                 new()
                 {
                     Id = 1,
@@ -33,7 +33,7 @@ namespace Presentation.Examples
                         Name = "Analista"
                     }
                 }
-            };
+            ];
         }
     }
 }

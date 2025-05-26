@@ -18,7 +18,7 @@ namespace Application.UserCase
         {
             List<User> users = await _query.GetAll();
             return UserMapper.ToResponseList(users);
-        }        
+        }
         public async Task<UserResponse?> GetByMail(string email)
         {
             User user = await _query.GetByMail(email);

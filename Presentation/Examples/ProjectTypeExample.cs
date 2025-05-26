@@ -7,12 +7,12 @@ namespace Presentation.Examples
     {
         public List<GenericResponse> GetExamples()
         {
-            return new List<GenericResponse>
-            {
+            return
+            [
                 new() { Id = 1, Name = "Desarrollo" },
                 new() { Id = 2, Name = "Investigación" },
                 new() { Id = 3, Name = "Mejora de Procesos" }
-            };
+            ];
         }
     }
 }

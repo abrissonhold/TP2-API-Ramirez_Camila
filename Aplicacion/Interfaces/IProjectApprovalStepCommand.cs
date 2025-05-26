@@ -4,7 +4,7 @@ namespace Application.Interfaces
 {
     public interface IProjectApprovalStepCommand
     {
-        public Task CreateProjectApprovalStep(ProjectProposal projectProposal, List<ApprovalRule> rules);
-        public Task<bool> UpdateStep(ProjectApprovalStep step);
+        Task CreateProjectApprovalStep(ProjectProposal projectProposal, List<ApprovalRule> rules);
+        Task<bool> UpdateStep(ProjectApprovalStep step);
     }
 }

@@ -17,10 +17,10 @@ namespace Infrastructure.Command
         public async Task CreateProjectApprovalStep(ProjectProposal projectProposal, List<ApprovalRule> rules)
         {
             int orden = 1;
-            foreach (var rule in rules)
+            foreach (ApprovalRule rule in rules)
             {
-                var pendingStatus = await _context.ApprovalStatus.FirstAsync(x => x.Id == 1);
-                var step = new ProjectApprovalStep
+                ApprovalStatus pendingStatus = await _context.ApprovalStatus.FirstAsync(x => x.Id == 1);
+                ProjectApprovalStep step = new()
                 {
                     ProjectProposalId = projectProposal.Id,
                     ProjectProposal = projectProposal,
@@ -34,23 +34,26 @@ namespace Infrastructure.Command
                     DecisionDate = null,
                     Observations = null
                 };
-                 _context.ProjectApprovalStep.Add(step);
+                _ = _context.ProjectApprovalStep.Add(step);
                 orden++;
             }
-            await _context.SaveChangesAsync();
+            _ = await _context.SaveChangesAsync();
         }
 
         public async Task<bool> UpdateStep(ProjectApprovalStep step)
         {
-            var existingStep = await _context.ProjectApprovalStep.FindAsync(step.Id);
-            if (existingStep == null) return false;
+            ProjectApprovalStep? existingStep = await _context.ProjectApprovalStep.FindAsync(step.Id);
+            if (existingStep == null)
+            {
+                return false;
+            }
 
             existingStep.Status = step.Status;
             existingStep.Observations = step.Observations;
             existingStep.DecisionDate = step.DecisionDate;
             existingStep.ApproverUserId = step.ApproverUserId;
 
-            await _context.SaveChangesAsync();
+            _ = await _context.SaveChangesAsync();
             return true;
         }
     }

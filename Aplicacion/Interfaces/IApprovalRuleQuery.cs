@@ -4,6 +4,6 @@ namespace Application.Interfaces
 {
     public interface IApprovalRuleQuery
     {
-        public List<ApprovalRule> GetApplicableRule(ProjectProposal projectProposal);
+        List<ApprovalRule> GetApplicableRule(ProjectProposal projectProposal);
     }
 }

@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Response
+﻿namespace Application.Response
 {
     public class ProjectShortResponse
     {
@@ -19,18 +17,18 @@ namespace Application.Response
         public Guid Id { get; set; }
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;
-        public decimal EstimatedAmount { get; set; }        
-        public int EstimatedDuration { get; set; }        
+        public decimal EstimatedAmount { get; set; }
+        public int EstimatedDuration { get; set; }
         public required GenericResponse Area { get; set; }
-        public required GenericResponse Status { get; set; }        
+        public required GenericResponse Status { get; set; }
         public required GenericResponse Type { get; set; }
         public required UserResponse User { get; set; }
     }
     public class ProjectProposalResponseDetail
     {
         public ProjectProposalResponse ProjectProposal { get; set; } = null!;
-        public ICollection<ShortApprovalStepResponse> Steps { get; set; } = new List<ShortApprovalStepResponse>();
-        public static ProjectProposalResponseDetail Conflict => new ProjectProposalResponseDetail
+        public ICollection<ShortApprovalStepResponse> Steps { get; set; } = [];
+        public static ProjectProposalResponseDetail Conflict => new()
         {
             ProjectProposal = null!,
             Steps = []

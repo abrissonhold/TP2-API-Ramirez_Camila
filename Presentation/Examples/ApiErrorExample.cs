@@ -1,5 +1,4 @@
 ﻿using Application.Exceptions;
-using Application.Response;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace Presentation.Examples

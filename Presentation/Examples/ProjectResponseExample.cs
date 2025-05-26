@@ -26,8 +26,8 @@ public class ProjectResponseExample : IExamplesProvider<ProjectProposalResponseD
                     ApproverRole = new GenericResponse { Id = 2, Name = "Gerente" }
                 }
             },
-            Steps = new List<ShortApprovalStepResponse>
-            {
+            Steps =
+            [
                 new ShortApprovalStepResponse
                 {
                     Id = 1,
@@ -45,7 +45,7 @@ public class ProjectResponseExample : IExamplesProvider<ProjectProposalResponseD
                     ApproverRole = new GenericResponse { Id = 2, Name = "Gerente" },
                     Status = new GenericResponse { Id = 1, Name = "Pendiente" }
                 }
-            }
+            ]
         };
     }
 }

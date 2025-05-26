@@ -1,5 +1,6 @@
 ﻿using Application.Exceptions;
 using Application.Interfaces;
+using Application.Response;
 using Domain.Entities;
 
 namespace Application.UserCase
@@ -23,40 +24,65 @@ namespace Application.UserCase
         }
         public async Task<bool> UpdateProjectApprovalStep(long stepId, int newStatus, int userId, string? obs)
         {
-            var step = GetById(stepId);
-            var user = await _userService.GetById(userId);
-            if (user == null || step == null)
-                throw new Conflict("Datos inválidos.");
+            ProjectApprovalStep? step = GetById(stepId);
+            if (step.Status is not 1 and not 4)
+            {
+                throw new Conflict("Este paso ya fue decidido y no puede modificarse.");
+            }
+
+            UserResponse? user = await _userService.GetById(userId);
             if (user.Role != step.ApproverRoleId)
-                throw new Conflict("El usuario elegido no puede decidir por este dato.");
+            {
+                throw new Conflict("El usuario elegido no puede decidir por este paso.");
+            }
+
+            if (user == null || step == null)
+            {
+                throw new Conflict("Datos inválidos.");
+            }
 
             step.Status = newStatus;
             step.DecisionDate = DateTime.Now;
             step.ApproverUserId = userId;
             step.Observations = obs;
 
-            var actualizado = await _command.UpdateStep(step);
-            if (!actualizado) return false;
+            bool actualizado = await _command.UpdateStep(step);
+            if (!actualizado)
+            {
+                return false;
+            }
 
-            var project = step.ProjectProposal;
-            var allSteps = project.ProjectApprovalSteps;
+            ProjectProposal project = step.ProjectProposal;
+            ICollection<ProjectApprovalStep> allSteps = project.ProjectApprovalSteps;
 
-            if (newStatus == 3) project.Status = 3;
-            if (newStatus == 4) project.Status = 4;
-            if (allSteps.All(s => s.Status == 2))  project.Status = 2;
+            if (newStatus == 3)
+            {
+                project.Status = 3;
+            }
+
+            if (newStatus == 4)
+            {
+                project.Status = 4;
+            }
+
+            if (allSteps.All(s => s.Status == 2))
+            {
+                project.Status = 2;
+            }
+
             await _projectCommand.UpdateProjectProposalStatus(project);
 
             return true;
         }
         public List<ProjectApprovalStep> GetPendingStepsByRole(int approverRoleId)
         {
-            var allSteps = _query.GetPendingStepsByRole(approverRoleId);
+            List<ProjectApprovalStep> allSteps = _query.GetPendingStepsByRole(approverRoleId);
 
-            var valid = new List<ProjectApprovalStep>();
+            List<ProjectApprovalStep> valid = [];
 
-            foreach (var step in allSteps)
+            foreach (ProjectApprovalStep step in allSteps)
             {
-                var previousSteps = step.ProjectProposal.ProjectApprovalSteps
+                IEnumerable<ProjectApprovalStep> previousSteps = step.ProjectProposal.ProjectApprovalSteps
                     .Where(p => p.StepOrder < step.StepOrder);
 
                 if (!previousSteps.Any() || previousSteps.All(p => p.Status == 2))
@@ -66,6 +92,11 @@ namespace Application.UserCase
             }
 
             return valid;
+        }
+
+        public List<ProjectApprovalStep> GetPendingStepsByUser(int userId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

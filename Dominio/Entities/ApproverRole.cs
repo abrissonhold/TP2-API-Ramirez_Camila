@@ -4,8 +4,8 @@
     {
         public int Id { get; set; }
         public string Name { get; set; } = null!;
-        public ICollection<ApprovalRule> ApprovalRules { get; set; } = new List<ApprovalRule>();
-        public ICollection<ProjectApprovalStep> ProjectApprovalSteps { get; set; } = new List<ProjectApprovalStep>();
-        public ICollection<User> Users { get; set; } = new List<User>();
+        public ICollection<ApprovalRule> ApprovalRules { get; set; } = [];
+        public ICollection<ProjectApprovalStep> ProjectApprovalSteps { get; set; } = [];
+        public ICollection<User> Users { get; set; } = [];
     }
 }

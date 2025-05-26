@@ -2,11 +2,6 @@
 using Domain.Entities;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Query
 {
@@ -20,7 +15,7 @@ namespace Infrastructure.Query
 
         public async Task<List<ProjectProposal>> GetByFilters(string? title, int? status, int? createdBy, int? approverUser)
         {
-            var query = _context.ProjectProposal
+            IQueryable<ProjectProposal> query = _context.ProjectProposal
                 .Include(proposal => proposal.AreaDetail)
                 .Include(proposal => proposal.ProjectType)
                 .Include(proposal => proposal.ApprovalStatus)
@@ -28,9 +23,9 @@ namespace Infrastructure.Query
                 .Include(proposal => proposal.ProjectApprovalSteps).ThenInclude(s => s.ApproverRole)
                 .Include(proposal => proposal.ProjectApprovalSteps).ThenInclude(s => s.ApprovalStatus)
                 .Include(proposal => proposal.ProjectApprovalSteps).ThenInclude(s => s.ApproverUser)
-                .AsQueryable().Where(proposal => (title == null || proposal.Title.Contains(title)) && 
-                                          (status == null || proposal.Status == status) && 
-                                          (createdBy == null || proposal.CreatedBy == createdBy) && 
+                .AsQueryable().Where(proposal => (title == null || proposal.Title.Contains(title)) &&
+                                          (status == null || proposal.Status == status) &&
+                                          (createdBy == null || proposal.CreatedBy == createdBy) &&
                                           (approverUser == null || proposal.ProjectApprovalSteps.Any(s => s.ApproverUserId == approverUser)));
 
             return await query.OrderByDescending(p => p.CreateAt).ToListAsync();

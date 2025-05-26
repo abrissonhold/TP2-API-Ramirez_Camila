@@ -21,7 +21,7 @@ namespace Application.Mappers
         }
         public static List<ProjectShortResponse> ToShortResponseList(List<ProjectProposal> projects)
         {
-            return projects.Select(p => ToShortResponse(p)).ToList();
+            return projects.Select(ToShortResponse).ToList();
         }
 
         public static ProjectProposalResponse ToResponse(ProjectProposal p)
@@ -41,7 +41,7 @@ namespace Application.Mappers
         }
         public static List<ProjectProposalResponse> ToResponseList(List<ProjectProposal> projects)
         {
-            return projects.Select(p => ToResponse(p)).ToList();
+            return projects.Select(ToResponse).ToList();
         }
 
         public static ProjectProposalResponseDetail ToDetailResponse(ProjectProposal p)
@@ -50,13 +50,13 @@ namespace Application.Mappers
             {
                 ProjectProposal = ToResponse(p),
                 Steps = p.ProjectApprovalSteps
-                    .Select(s => StepMapper.ToShortResponse(s))
+                    .Select(StepMapper.ToShortResponse)
                     .OrderBy(s => s.StepOrder).ToList()
             };
         }
         public static List<ProjectProposalResponseDetail> ToDetailResponseList(List<ProjectProposal> projects)
         {
-            return projects.Select(p => ToDetailResponse(p)).ToList();
+            return projects.Select(ToDetailResponse).ToList();
         }
     }
 }

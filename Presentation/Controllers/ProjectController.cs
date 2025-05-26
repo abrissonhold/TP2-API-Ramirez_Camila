@@ -77,7 +77,7 @@ namespace Presentation.Controllers
                 return BadRequest(new ApiError { Message = "Datos de decisión inválidos" });
             }
 
-            Task<ProjectProposalResponseDetail> project = _service.GetById(id);
+            ProjectProposalResponseDetail project = await _service.GetById(id);
             if (project == null)
             {
                 return NotFound(new ApiError { Message = "Proyecto no encontrado" });

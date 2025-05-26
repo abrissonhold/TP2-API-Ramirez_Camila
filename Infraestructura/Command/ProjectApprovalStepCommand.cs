@@ -56,5 +56,12 @@ namespace Infrastructure.Command
             _ = await _context.SaveChangesAsync();
             return true;
         }
+        public async Task DeleteStepsByProposal(Guid proposalId)
+        {
+            IQueryable<ProjectApprovalStep> steps = _context.ProjectApprovalStep.Where(s => s.ProjectProposalId == proposalId);
+            _context.ProjectApprovalStep.RemoveRange(steps);
+            _ = await _context.SaveChangesAsync();
+        }
+
     }
 }

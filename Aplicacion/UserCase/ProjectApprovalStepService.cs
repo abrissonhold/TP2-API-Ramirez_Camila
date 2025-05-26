@@ -11,34 +11,35 @@ namespace Application.UserCase
         private readonly IProjectApprovalStepCommand _command;
         private readonly IProjectProposalCommand _projectCommand;
         private readonly IUserService _userService;
-        public ProjectApprovalStepService(IProjectApprovalStepQuery query, IProjectApprovalStepCommand command, IProjectProposalCommand projectProposalCommand)
+        public ProjectApprovalStepService(IProjectApprovalStepQuery query, IProjectApprovalStepCommand command, IProjectProposalCommand projectProposalCommand, IUserService userService)
         {
             _query = query;
             _command = command;
             _projectCommand = projectProposalCommand;
+            _userService = userService;
         }
 
-        public ProjectApprovalStep? GetById(long stepId)
+        public async Task<ProjectApprovalStep?> GetById(long stepId)
         {
-            return _query.GetById(stepId);
+            return await _query.GetById(stepId);
         }
         public async Task<bool> UpdateProjectApprovalStep(long stepId, int newStatus, int userId, string? obs)
         {
-            ProjectApprovalStep? step = GetById(stepId);
+            ProjectApprovalStep? step = await GetById(stepId);
             if (step.Status is not 1 and not 4)
             {
                 throw new Conflict("Este paso ya fue decidido y no puede modificarse.");
             }
 
             UserResponse? user = await _userService.GetById(userId);
-            if (user.Role != step.ApproverRoleId)
-            {
-                throw new Conflict("El usuario elegido no puede decidir por este paso.");
-            }
-
             if (user == null || step == null)
             {
                 throw new Conflict("Datos inválidos.");
+            }
+
+            if (user.Role != step.ApproverRoleId)
+            {
+                throw new Conflict("El usuario elegido no puede decidir por este paso.");
             }
 
             step.Status = newStatus;
@@ -92,11 +93,6 @@ namespace Application.UserCase
             }
 
             return valid;
-        }
-
-        public List<ProjectApprovalStep> GetPendingStepsByUser(int userId)
-        {
-            throw new NotImplementedException();
         }
     }
 }

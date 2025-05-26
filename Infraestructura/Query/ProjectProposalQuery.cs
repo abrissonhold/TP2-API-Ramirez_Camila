@@ -26,7 +26,7 @@ namespace Infrastructure.Query
                 .AsQueryable().Where(proposal => (title == null || proposal.Title.Contains(title)) &&
                                           (status == null || proposal.Status == status) &&
                                           (createdBy == null || proposal.CreatedBy == createdBy) &&
-                                          (approverUser == null || proposal.ProjectApprovalSteps.Any(s => s.ApproverUserId == approverUser)));
+                                          (approverUser == null || proposal.ProjectApprovalSteps.Any(s => s.ApproverRoleId == approverUser)));
 
             return await query.OrderByDescending(p => p.CreateAt).ToListAsync();
         }

@@ -6,5 +6,6 @@ namespace Application.Interfaces
     {
         Task CreateProjectApprovalStep(ProjectProposal projectProposal, List<ApprovalRule> rules);
         Task<bool> UpdateStep(ProjectApprovalStep step);
+        Task DeleteStepsByProposal(Guid proposalId);
     }
 }

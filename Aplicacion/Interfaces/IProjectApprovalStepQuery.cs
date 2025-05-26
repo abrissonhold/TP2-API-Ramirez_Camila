@@ -4,7 +4,7 @@ namespace Application.Interfaces
 {
     public interface IProjectApprovalStepQuery
     {
-        ProjectApprovalStep? GetById(long stepId);
+        Task<ProjectApprovalStep?> GetById(long stepId);
         List<ProjectApprovalStep> GetPendingStepsByRole(int approverRoleId);
     }
 }

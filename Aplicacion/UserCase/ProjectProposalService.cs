@@ -77,18 +77,16 @@ namespace Application.UserCase
         public async Task<ProjectProposalResponseDetail?> ProcessDecision(Guid projectId, int stepId, int userId, int status, string? observation)
         {
             ProjectProposal project = await _query.GetById(projectId);
-            if (project.Status != 1)
+            if (project.Status is not 1 and not 4)
             {
                 return null;
             }
 
-            ProjectApprovalStep step = project.ProjectApprovalSteps.First(s => s.StepOrder == stepId);
+            ProjectApprovalStep? step = await _stepService.GetById(stepId);
             if (step == null)
             {
                 throw new Conflict("No existe un paso con ese orden para este proyecto.");
             }
-
-            stepId = (int)step.Id;
 
             bool updated = await _stepService.UpdateProjectApprovalStep(stepId, status, userId, observation);
             if (!updated)
@@ -121,6 +119,11 @@ namespace Application.UserCase
             proposal.Title = title;
             proposal.Description = description;
             proposal.EstimatedDuration = duration;
+            proposal.Status = 1;
+
+            await _stepCommand.DeleteStepsByProposal(proposal.Id);
+            List<ApprovalRule> rules = _ruleQuery.GetApplicableRule(proposal);
+            await _stepCommand.CreateProjectApprovalStep(proposal, rules);
 
             await _command.UpdateProjectProposal(proposal);
             return ProjectMapper.ToDetailResponse(proposal);

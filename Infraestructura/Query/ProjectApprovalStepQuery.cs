@@ -37,5 +37,10 @@ namespace Infrastructure.Query
                 .OrderBy(s => s.StepOrder)
                 .ToList();
         }
+
+        Task<ProjectApprovalStep?> IProjectApprovalStepQuery.GetById(long stepId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

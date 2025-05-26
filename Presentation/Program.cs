@@ -21,6 +21,9 @@ builder.Services.AddSwaggerGen(options =>
         Description = "API para la gestión y aprobación de solicitudes de proyectos"
     });
     options.ExampleFilters();
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    options.IncludeXmlComments(xmlPath);
 });
 builder.Services.AddSwaggerExamplesFromAssemblyOf<ApiErrorExample>(); 
 

@@ -7,5 +7,6 @@ namespace Application.Interfaces
         Task<List<UserResponse>> GetAll();
         Task<UserResponse?> GetByMail(string email);
         bool Exists(string email);
+        Task<UserResponse?> GetById(int id);
     }
 }

@@ -34,5 +34,12 @@ namespace Infrastructure.Query
             return _context.User
                 .Any(u => u.Email == email);
         }
+
+        public async Task<User?> GetById(int id)
+        {
+            return await _context.User
+                .Include(u => u.ApproverRole)
+                .FirstOrDefaultAsync(u => u.Id == id);
+        }
     }
 }

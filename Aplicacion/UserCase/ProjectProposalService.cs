@@ -77,11 +77,13 @@ namespace Application.UserCase
 
         public async Task<ProjectProposalResponseDetail> ProcessDecision(Guid projectId, int stepId, int userId, int status, string? observation)
         {
-            var updated = await _stepService.UpdateProjectApprovalStep(stepId, status, userId, observation);
-            if (!updated) return null;
-
             var updatedProject = await _query.GetById(projectId);
-            if (updatedProject == null) return null;
+            if (updatedProject.Status != 1) return null;
+
+            stepId = (int)updatedProject.ProjectApprovalSteps.First(s => s.Id == stepId).Id;
+
+            var updated = await _stepService.UpdateProjectApprovalStep(stepId, status, userId, observation);
+            if (!updated) throw new Exception("El paso no fue actualizado");
 
             return ProjectMapper.ToDetailResponse(updatedProject);
         }
@@ -90,7 +92,10 @@ namespace Application.UserCase
             var proposal = await _query.GetById(id);
             if (proposal == null) return null;
 
-            if (proposal.Status != 1) return ProjectProposalResponseDetail.Conflict;
+            if (ExistingProject(title))
+                throw new Conflict("Ya existe un proyecto creado con ese nombre. ");
+            if (proposal.Status != 4)
+                throw new Conflict("Solo se puede editar un proyecto con estado observado.");
 
             proposal.Title = title;
             proposal.Description = description;

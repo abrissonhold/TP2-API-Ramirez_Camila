@@ -7,6 +7,7 @@ using Azure;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Examples;
 using Swashbuckle.AspNetCore.Filters;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Presentation.Controllers
 {
@@ -53,9 +54,7 @@ namespace Presentation.Controllers
         {
             if (!ModelState.IsValid || request.User <= 0 || request.Duration <= 0 || request.Type <= 0 || request.Area <= 0)
                 return BadRequest(new ApiError { Message = "Datos del proyecto inválidos" });
-            if (_service.ExistingProject(request.Title))
-                return BadRequest(new Conflict("Ya existe un proyecto creado con ese nombre"));
-            
+           
             var response = await _service.CreateProjectProposal(request.Title, request.Description,
                 request.Area, request.Type, request.Amount, request.Duration, request.User);
 
@@ -74,14 +73,12 @@ namespace Presentation.Controllers
         public async Task<ActionResult<ProjectProposalResponseDetail>> Decide(Guid id, [FromBody] DecisionStepRequest request)
         {
             if (!ModelState.IsValid || request.Id <= 0 || request.User <= 0 || request.Status < 2 || request.Status > 4)
-                return BadRequest(new ApiError { Message = "Datos de decisión inválidos" });
+                return BadRequest(new ApiError { Message = ("Datos de decisión inválidos") });
+            if (_service.GetById(id) == null) return NotFound(new ApiError { Message = "Proyecto no encontrado" });
 
             var result = await _service.ProcessDecision(id, request.Id, request.User, request.Status, request.Observation);
 
-            if (result == null)
-                return NotFound(new ApiError { Message = "Proyecto no encontrado" });
-            if (result == ProjectProposalResponseDetail.Conflict)
-                return Conflict(new ApiError { Message = "El proyecto ya no se encuentra en un estado que permite modificaciones" });
+            if (result == null) return Conflict(new ApiError { Message = "El proyecto ya no se encuentra en un estado que permite modificaciones" });
 
             return Ok(result);
         }
@@ -102,7 +99,7 @@ namespace Presentation.Controllers
 
             var result = await _service.UpdateProject(id, request.Title, request.Description, request.Duration);
 
-            if (result == null)
+            if (_service.GetById(id) == null)
                 return NotFound(new ApiError { Message = "Proyecto no encontrado" });
 
             if (result == ProjectProposalResponseDetail.Conflict)

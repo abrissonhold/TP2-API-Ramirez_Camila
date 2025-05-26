@@ -28,5 +28,10 @@ namespace Application.UserCase
         {
             return _query.Exists(email);
         }
+        public async Task<UserResponse?> GetById(int id)
+        {
+            User user = await _query.GetById(id);
+            return user != null ? UserMapper.ToResponse(user) : null;
+        }
     }
 }

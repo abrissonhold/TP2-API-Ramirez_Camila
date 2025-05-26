@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using Application.Exceptions;
+using Application.Interfaces;
 using Domain.Entities;
 
 namespace Application.UserCase
@@ -8,6 +9,7 @@ namespace Application.UserCase
         private readonly IProjectApprovalStepQuery _query;
         private readonly IProjectApprovalStepCommand _command;
         private readonly IProjectProposalCommand _projectCommand;
+        private readonly IUserService _userService;
         public ProjectApprovalStepService(IProjectApprovalStepQuery query, IProjectApprovalStepCommand command, IProjectProposalCommand projectProposalCommand)
         {
             _query = query;
@@ -22,17 +24,25 @@ namespace Application.UserCase
         public async Task<bool> UpdateProjectApprovalStep(long stepId, int newStatus, int userId, string? obs)
         {
             var step = GetById(stepId);
+            var user = await _userService.GetById(userId);
+            if (user == null || step == null)
+                throw new Conflict("Datos inválidos.");
+            if (user.Role != step.ApproverRoleId)
+                throw new Conflict("El usuario elegido no puede decidir por este dato.");
 
             step.Status = newStatus;
             step.DecisionDate = DateTime.Now;
             step.ApproverUserId = userId;
             step.Observations = obs;
+
             var actualizado = await _command.UpdateStep(step);
             if (!actualizado) return false;
 
             var project = step.ProjectProposal;
             var allSteps = project.ProjectApprovalSteps;
+
             if (newStatus == 3) project.Status = 3;
+            if (newStatus == 4) project.Status = 4;
             if (allSteps.All(s => s.Status == 2))  project.Status = 2;
             await _projectCommand.UpdateProjectProposalStatus(project);
 

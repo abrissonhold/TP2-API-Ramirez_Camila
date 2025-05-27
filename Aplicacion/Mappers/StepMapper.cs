@@ -5,9 +5,9 @@ namespace Application.Mappers
 {
     public static class StepMapper
     {
-        public static ShortApprovalStepResponse ToShortResponse(ProjectApprovalStep step)
+        public static ApprovalStepResponse ToShortResponse(ProjectApprovalStep step)
         {
-            return new ShortApprovalStepResponse
+            return new ApprovalStepResponse
             {
                 Id = step.Id,
                 StepOrder = step.StepOrder,
@@ -18,7 +18,7 @@ namespace Application.Mappers
                 ApproverUser = UserMapper.ToResponse(step.ApproverUser),
             };
         }
-        public static List<ShortApprovalStepResponse> ToShortResponseList(List<ProjectApprovalStep> steps)
+        public static List<ApprovalStepResponse> ToShortResponseList(List<ProjectApprovalStep> steps)
         {
             return steps.Select(ToShortResponse).ToList();
         }

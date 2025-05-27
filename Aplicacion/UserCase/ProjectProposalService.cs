@@ -108,7 +108,7 @@ namespace Application.UserCase
 
             if (ExistingProject(title))
             {
-                throw new Conflict("Ya existe un proyecto creado con ese nombre. ");
+                throw new Conflict("Ya existe un proyecto creado con ese nombre.");
             }
 
             if (proposal.Status != 4)

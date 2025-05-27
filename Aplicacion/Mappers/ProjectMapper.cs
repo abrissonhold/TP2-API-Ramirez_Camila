@@ -48,7 +48,15 @@ namespace Application.Mappers
         {
             return new ProjectProposalResponseDetail
             {
-                ProjectProposal = ToResponse(p),
+                Id = p.Id,
+                Title = p.Title,
+                Description = p.Description,
+                Area = GenericMapper.ToResponse(p.AreaDetail),
+                Type = GenericMapper.ToResponse(p.ProjectType),
+                Amount = (double)p.EstimatedAmount,
+                Duration = p.EstimatedDuration,
+                Status = GenericMapper.ToResponse(p.ApprovalStatus),
+                User = UserMapper.ToResponse(p.CreatedByUser),
                 Steps = p.ProjectApprovalSteps
                     .Select(StepMapper.ToShortResponse)
                     .OrderBy(s => s.StepOrder).ToList()

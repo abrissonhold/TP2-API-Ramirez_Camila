@@ -25,6 +25,17 @@ builder.Services.AddSwaggerGen(options =>
     string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     options.IncludeXmlComments(xmlPath);
 });
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddSwaggerExamplesFromAssemblyOf<ApiErrorExample>();
 
 string? connectionString = builder.Configuration["ConnectionString"];
@@ -67,4 +78,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+app.UseCors("AllowAll");
 app.Run();
+
+

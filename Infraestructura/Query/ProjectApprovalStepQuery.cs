@@ -14,14 +14,6 @@ namespace Infrastructure.Query
             _context = context;
         }
 
-        public ProjectApprovalStep? GetById(long stepId)
-        {
-            return _context.ProjectApprovalStep
-                .Include(s => s.ProjectProposal)
-                .Include(s => s.ApprovalStatus)
-                .FirstOrDefault(s => s.Id == stepId);
-        }
-
         public List<ProjectApprovalStep> GetPendingStepsByRole(int approverRoleId)
         {
             return _context.ProjectApprovalStep
@@ -37,10 +29,13 @@ namespace Infrastructure.Query
                 .OrderBy(s => s.StepOrder)
                 .ToList();
         }
-
-        Task<ProjectApprovalStep?> IProjectApprovalStepQuery.GetById(long stepId)
+        public async Task<ProjectApprovalStep?> GetById(long stepId)
         {
-            throw new NotImplementedException();
+            return await _context.ProjectApprovalStep
+                .Include(s => s.ApproverRole)
+                .Include(s => s.ApprovalStatus)
+                .Include(s => s.ApproverUser)
+               .FirstOrDefaultAsync(s => s.Id == stepId);
         }
     }
 }

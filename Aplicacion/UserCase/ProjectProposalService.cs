@@ -31,6 +31,10 @@ namespace Application.UserCase
         public async Task<ProjectProposalResponseDetail> CreateProjectProposal(string title, string description,
             int area, int type, decimal estimatedAmount, int estimatedDuration, int createdBy)
         {
+            if (_query.ExistsByTitle(title,null))
+            {
+                throw new Conflict("Ya existe un proyecto creado con ese nombre.");
+            }
             ProjectProposal pp = new()
             {
                 Title = title,

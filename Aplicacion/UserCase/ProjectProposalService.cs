@@ -69,9 +69,9 @@ namespace Application.UserCase
             return ProjectMapper.ToDetailResponse(proposal);
         }
 
-        public bool ExistingProject(string title)
+        public bool ExistingProject(string title, Guid? excludeId)
         {
-            return _query.ExistsByTitle(title);
+            return _query.ExistsByTitle(title, excludeId);
         }
 
         public async Task<ProjectProposalResponseDetail?> ProcessDecision(Guid projectId, int stepId, int userId, int status, string? observation)
@@ -106,7 +106,7 @@ namespace Application.UserCase
                 return null;
             }
 
-            if (ExistingProject(title))
+            if (ExistingProject(title, id))
             {
                 throw new Conflict("Ya existe un proyecto creado con ese nombre.");
             }

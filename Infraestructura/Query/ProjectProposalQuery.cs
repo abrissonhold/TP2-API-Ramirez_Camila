@@ -57,10 +57,10 @@ namespace Infrastructure.Query
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public bool ExistsByTitle(string title)
+        public bool ExistsByTitle(string title,Guid? excludeId = null)
         {
             return _context.ProjectProposal
-                .Any(p => p.Title == title);
+                .Any(p => p.Title == title && (excludeId == null || p.Id != excludeId));
         }
     }
 }

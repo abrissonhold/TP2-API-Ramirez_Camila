@@ -67,12 +67,24 @@ builder.Services.AddTransient<IRoleQuery, RoleQuery>();
 builder.Services.AddTransient<IApprovalStatusService, ApprovalStatusService>();
 builder.Services.AddTransient<IApprovalStatusQuery, ApprovalStatusQuery>();
 
+builder.Services.AddTransient<SeedService>();
+
 WebApplication app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     _ = app.UseSwagger();
     _ = app.UseSwaggerUI();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var seedService = scope.ServiceProvider.GetRequiredService<SeedService>();
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    if (!context.ProjectProposal.Any())
+    {
+        await seedService.SeedProyectosAsync();
+    }
 }
 
 app.UseHttpsRedirection();

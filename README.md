@@ -18,4 +18,4 @@ Este es el backend para un sistema de gestión y aprobación de propuestas de pr
   
 ## Frontend relacionado
 Este backend es consumido por un frontend en HTML, CSS y JS:
-![Link al front](https://github.com/abrissonhold/TP3-FRONT-Ramirez_Camila)
+[Link al front](https://github.com/abrissonhold/TP3-FRONT-Ramirez_Camila)

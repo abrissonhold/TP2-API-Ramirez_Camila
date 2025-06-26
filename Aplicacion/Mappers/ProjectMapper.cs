@@ -33,8 +33,8 @@ namespace Application.Mappers
                 Description = p.Description,
                 Area = GenericMapper.ToResponse(p.AreaDetail),
                 Type = GenericMapper.ToResponse(p.ProjectType),
-                EstimatedAmount = p.EstimatedAmount,
-                EstimatedDuration = p.EstimatedDuration,
+                Amount = p.EstimatedAmount,
+                Duration = p.EstimatedDuration,
                 Status = GenericMapper.ToResponse(p.ApprovalStatus),
                 User = UserMapper.ToResponse(p.CreatedByUser),
             };

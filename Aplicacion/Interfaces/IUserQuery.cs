@@ -6,7 +6,8 @@ namespace Application.Interfaces
     {
         Task<List<User>> GetAll();
         Task<User?> GetByMail(string email);
-        bool Exists(string email);
+        Task<bool> Exists(int userId);
+        bool ExistsByEmail(string email);
         Task<User?> GetById(int id);
     }
 }

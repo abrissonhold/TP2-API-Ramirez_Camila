@@ -1,16 +1,24 @@
+using Application.Exceptions;
 using Application.Interfaces;
 using Application.UserCase;
 using Infrastructure.Command;
 using Infrastructure.Persistence;
 using Infrastructure.Query;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Presentation.Examples;
 using Swashbuckle.AspNetCore.Filters;
+using System.Text.Json;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    });
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -86,6 +94,23 @@ using (var scope = app.Services.CreateScope())
         await seedService.SeedProyectosAsync();
     }
 }
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+
+        var error = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+
+        var result = JsonSerializer.Serialize(new ApiError
+        {
+            message = "Error inesperado: " + error?.Message
+        });
+
+        await context.Response.WriteAsync(result);
+    });
+});
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

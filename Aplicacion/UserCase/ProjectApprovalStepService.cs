@@ -25,22 +25,32 @@ namespace Application.UserCase
         }
         public async Task<bool> UpdateProjectApprovalStep(long stepId, int newStatus, int userId, string? obs)
         {
-            ProjectApprovalStep? step = await GetById(stepId);
-            if (step.Status is not 1 and not 4)
-            {
-                throw new Conflict("Este paso ya fue decidido y no puede modificarse.");
-            }
+            ProjectApprovalStep? step = await GetById(stepId);            
+            if (step == null)
+                throw new ValidationException("Paso no encontrado");       
+            
+            if (newStatus < 1 || newStatus > 4)
+                throw new ValidationException("Estado inválido.");
+
+            if (step.Status != 1)
+                throw new ConflictException("No se puede modificar un paso que ya fue decidido");
 
             UserResponse? user = await _userService.GetById(userId);
-            if (user == null || step == null)
-            {
-                throw new Conflict("Datos inválidos.");
-            }
+            if (user == null)
+                throw new ValidationException("Usuario no encontrado");
 
-            if (user.Role != step.ApproverRoleId)
-            {
-                throw new Conflict("El usuario elegido no puede decidir por este paso.");
-            }
+            if (user.Role.Id != step.ApproverRoleId)
+                throw new ValidationException("No tiene permisos para aprobar este paso");
+
+            ProjectProposal project = step.ProjectProposal;
+            ICollection<ProjectApprovalStep> allSteps = step.ProjectProposal.ProjectApprovalSteps;
+
+            bool hayPasosPreviosSinResolver = allSteps
+                .Where(s => s.StepOrder < step.StepOrder)
+                .Any(s => s.Status == 1);
+
+            if (hayPasosPreviosSinResolver)
+                throw new ValidationException("Debe esperar a que se decidan los pasos anteriores");
 
             step.Status = newStatus;
             step.DecisionDate = DateTime.Now;
@@ -49,27 +59,20 @@ namespace Application.UserCase
 
             bool actualizado = await _command.UpdateStep(step);
             if (!actualizado)
-            {
                 return false;
-            }
 
-            ProjectProposal project = step.ProjectProposal;
-            ICollection<ProjectApprovalStep> allSteps = project.ProjectApprovalSteps;
+            var stepInCollection = allSteps.FirstOrDefault(s => s.Id == step.Id);
+            if (stepInCollection != null)
+                stepInCollection.Status = newStatus;
 
             if (newStatus == 3)
-            {
                 project.Status = 3;
-            }
 
             if (newStatus == 4)
-            {
                 project.Status = 4;
-            }
 
             if (allSteps.All(s => s.Status == 2))
-            {
                 project.Status = 2;
-            }
 
             await _projectCommand.UpdateProjectProposalStatus(project);
 

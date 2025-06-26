@@ -14,8 +14,7 @@ namespace Presentation.Examples
                     Id = 1,
                     Name = "Juan Pérez",
                     Email = "juan.perez@empresa.com",
-                    Role = 2,
-                    ApproverRole = new GenericResponse
+                    Role = new GenericResponse
                     {
                         Id = 2,
                         Name = "Gerente"
@@ -26,8 +25,7 @@ namespace Presentation.Examples
                     Id = 2,
                     Name = "Ana González",
                     Email = "ana.gonzalez@empresa.com",
-                    Role = 1,
-                    ApproverRole = new GenericResponse
+                    Role = new GenericResponse
                     {
                         Id = 3,
                         Name = "Analista"

@@ -20,8 +20,7 @@ public class ProjectResponseExample : IExamplesProvider<ProjectProposalResponseD
                 Id = 1,
                 Name = "Juan Pérez",
                 Email = "juan.perez@empresa.com",
-                Role = 2,
-                ApproverRole = new GenericResponse { Id = 2, Name = "Gerente" }
+                Role = new GenericResponse { Id = 2, Name = "Gerente" }
             },
             Steps =
             [
@@ -36,8 +35,7 @@ public class ProjectResponseExample : IExamplesProvider<ProjectProposalResponseD
                         Id = 1,
                         Name = "Juan Pérez",
                         Email = "juan.perez@empresa.com",
-                        Role = 2,
-                        ApproverRole = new GenericResponse { Id = 2, Name = "Gerente" }
+                        Role = new GenericResponse { Id = 2, Name = "Gerente" }
                     },
                     ApproverRole = new GenericResponse { Id = 2, Name = "Gerente" },
                     Status = new GenericResponse { Id = 1, Name = "Pendiente" }

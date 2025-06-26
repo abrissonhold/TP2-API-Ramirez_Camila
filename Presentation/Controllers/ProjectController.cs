@@ -2,6 +2,7 @@
 using Application.Interfaces;
 using Application.Request;
 using Application.Response;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Examples;
 using Swashbuckle.AspNetCore.Filters;
@@ -32,13 +33,13 @@ namespace Presentation.Controllers
         {
             if (status < 0 || applicant < 0 || approvalUser < 0)
             {
-                return BadRequest(new ApiError { Message = "Parámetro de consulta inválido" });
+                return BadRequest(new ApiError { message = "Parámetro de consulta inválido" });
             }
 
             List<ProjectShortResponse> result = await _service.Search(title, status, applicant, approvalUser);
 
             return result == null || result.Count == 0
-                ? (ActionResult<List<ProjectShortResponse>>)NotFound(new ApiError { Message = "No se encontraron propuestas que coincidan con los filtros." })
+                ? (ActionResult<List<ProjectShortResponse>>)NotFound(new ApiError { message = "No se encontraron propuestas que coincidan con los filtros." })
                 : (ActionResult<List<ProjectShortResponse>>)Ok(result);
         }
 
@@ -50,15 +51,29 @@ namespace Presentation.Controllers
         [SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(ApiErrorExample))]
         public async Task<ActionResult<ProjectProposalResponseDetail>> Create([FromBody] ProjectCreateRequest request)
         {
-            if (!ModelState.IsValid || request.User <= 0 || request.Duration <= 0 || request.Type <= 0 || request.Area <= 0)
+            if (!ModelState.IsValid ||
+                request.User <= 0 ||
+                request.Duration <= 0 ||
+                request.Type <= 0 ||
+                request.Area <= 0 ||
+                request.Amount <= 0 ||
+                string.IsNullOrWhiteSpace(request.Description) ||
+                string.IsNullOrWhiteSpace(request.Title))
             {
-                return BadRequest(new ApiError { Message = "Datos del proyecto inválidos" });
+                return BadRequest(new ApiError { message = "Datos del proyecto inválidos" });
             }
 
-            ProjectProposalResponseDetail response = await _service.CreateProjectProposal(request.Title, request.Description,
-                request.Area, request.Type, request.Amount, request.Duration, request.User);
+            try
+            {
+                ProjectProposalResponseDetail response = await _service.CreateProjectProposal(request.Title, request.Description,
+                    request.Area, request.Type, request.Amount, request.Duration, request.User);
 
-            return Ok(response);
+                return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new ApiError { message = ex.Message });
+            }
         }
         [HttpPatch("{id}/decision")]
         [ProducesResponseType(typeof(ProjectProposalResponseDetail), StatusCodes.Status200OK)]
@@ -72,23 +87,50 @@ namespace Presentation.Controllers
         [SwaggerResponseExample(StatusCodes.Status409Conflict, typeof(ApiErrorExample))]
         public async Task<ActionResult<ProjectProposalResponseDetail>> Decide(Guid id, [FromBody] DecisionStepRequest request)
         {
-            if (!ModelState.IsValid || request.Id <= 0 || request.User <= 0 || request.Status < 2 || request.Status > 4)
+            if (!ModelState.IsValid)
             {
-                return BadRequest(new ApiError { Message = "Datos de decisión inválidos" });
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Where(e => !string.IsNullOrWhiteSpace(e.ErrorMessage))
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+
+                var errorMessage = errors.FirstOrDefault() ?? "Datos de decisión inválidos";
+                return BadRequest(new ApiError { message = errorMessage });
             }
 
-            ProjectProposalResponseDetail project = await _service.GetById(id);
-            if (project == null)
+            if (request.Id <= 0 || request.User <= 0 || request.Status <= 0)
+                return BadRequest(new ApiError { message = "Datos de decisión inválidos" });
+
+            try
             {
-                return NotFound(new ApiError { Message = "Proyecto no encontrado" });
+                var result = await _service.ProcessDecision(id, request.Id, request.User, request.Status, request.Observation);
+
+                if (result == null)
+                    return Conflict(new ApiError { message = "El proyecto ya no se encuentra en un estado que permite modificaciones" });
+
+                return Ok(result);
             }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new ApiError { message = ex.ToString() });
+            }
+            catch (NotFoundException ex)
+            {
+                return BadRequest(new ApiError { message = ex.Message });
 
-            ProjectProposalResponseDetail result = await _service.ProcessDecision(id, request.Id, request.User, request.Status, request.Observation);
+            }
+            catch (ConflictException ex)
+            {
+                return BadRequest(new ApiError { message = ex.Message });
 
-            return result == null
-                ? (ActionResult<ProjectProposalResponseDetail>)Conflict(new ApiError { Message = "El proyecto ya no se encuentra en un estado que permite modificaciones" })
-                : (ActionResult<ProjectProposalResponseDetail>)Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Error inesperado: {ex.Message}" });
+            }
         }
+
         [HttpPatch("{id}")]
         [ProducesResponseType(typeof(ProjectProposalResponseDetail), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
@@ -101,18 +143,24 @@ namespace Presentation.Controllers
         [SwaggerResponseExample(StatusCodes.Status409Conflict, typeof(ApiErrorExample))]
         public async Task<ActionResult<ProjectProposalResponseDetail>> UpdateProject(Guid id, [FromBody] ProjectUpdateRequest request)
         {
-            if (!ModelState.IsValid || request.Duration <= 0 || string.IsNullOrWhiteSpace(request.Title))
+            if (request.Duration <= 0 || string.IsNullOrWhiteSpace(request.Title))
+                return BadRequest(new ApiError { message = "Datos de actualización inválidos" });
+            if (!ModelState.IsValid)
+                return BadRequest(new ApiError { message = "Datos de actualización inválidos" });
+            try
             {
-                return BadRequest(new ApiError { Message = "Datos de actualización inválidos" });
+                ProjectProposalResponseDetail? result = await _service.UpdateProject(id, request.Title, request.Description, request.Duration);
+                
+                return Ok(result);
             }
-
-            ProjectProposalResponseDetail? result = await _service.UpdateProject(id, request.Title, request.Description, request.Duration);
-
-            return _service.GetById(id) == null
-                ? (ActionResult<ProjectProposalResponseDetail>)NotFound(new ApiError { Message = "Proyecto no encontrado" })
-                : result == ProjectProposalResponseDetail.Conflict
-                ? (ActionResult<ProjectProposalResponseDetail>)Conflict(new ApiError { Message = "El proyecto ya no se encuentra en un estado que permite modificaciones" })
-                : (ActionResult<ProjectProposalResponseDetail>)Ok(result);
+            catch (NotFoundException ex)
+            {
+                return NotFound(new ApiError { message = ex.Message });
+            }
+            catch (ConflictException ex)
+            {
+                return Conflict(new ApiError { message = ex.Message });
+            }
         }
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(ProjectProposalResponseDetail), StatusCodes.Status200OK)]
@@ -125,11 +173,27 @@ namespace Presentation.Controllers
         {
             if (id == Guid.Empty)
             {
-                return BadRequest(new ApiError { Message = "Datos de actualización inválidos" });
+                return BadRequest(new ApiError { message = "Datos de actualización inválidos" });
             }
 
-            ProjectProposalResponseDetail result = await _service.GetById(id);
-            return result == null ? (ActionResult<ProjectProposalResponseDetail>)NotFound(new ApiError { Message = "Datos de actualización inválidos" }) : (ActionResult<ProjectProposalResponseDetail>)Ok(result);
+            try
+            {
+                var result = await _service.GetById(id);
+
+                if (result == null)
+                {
+                    return NotFound(new ApiError { message = "Proyecto no encontrado" });
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ApiError
+                {
+                    message = "Ocurrió un error al recuperar el proyecto"
+                });
+            }
         }
 
     }

@@ -5,7 +5,6 @@
         public required int Id { get; set; }
         public required string Name { get; set; }
         public required string Email { get; set; }
-        public required int Role { get; set; }
-        public required GenericResponse ApproverRole { get; set; }
+        public required GenericResponse Role { get; set; }
     }
 }

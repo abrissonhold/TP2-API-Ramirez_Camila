@@ -26,7 +26,7 @@ namespace Application.UserCase
         }
         public bool Exists(string email)
         {
-            return _query.Exists(email);
+            return _query.ExistsByEmail(email);
         }
         public async Task<UserResponse?> GetById(int id)
         {

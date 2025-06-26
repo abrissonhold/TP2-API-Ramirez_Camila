@@ -14,8 +14,7 @@ namespace Application.Mappers
                     Id = user.Id,
                     Name = user.Name,
                     Email = user.Email,
-                    Role = user.Role,
-                    ApproverRole = GenericMapper.ToResponse(user.ApproverRole),
+                    Role = GenericMapper.ToResponse(user.ApproverRole),
                 };
         }
 

@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Query
 {
@@ -10,6 +11,10 @@ namespace Infrastructure.Query
         public ProjectTypeQuery(AppDbContext context)
         {
             _context = context;
+        }
+        public async Task<bool> Exists(int typeId)
+        {
+            return await _context.ProjectType.AnyAsync(t => t.Id == typeId);
         }
         public List<ProjectType> GetAll()
         {

@@ -28,7 +28,7 @@ namespace Infrastructure.Query
                 .FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        public bool Exists(string email)
+        public bool ExistsByEmail(string email)
         {
             return _context.User
                 .Any(u => u.Email == email);
@@ -39,6 +39,11 @@ namespace Infrastructure.Query
             return await _context.User
                 .Include(u => u.ApproverRole)
                 .FirstOrDefaultAsync(u => u.Id == id);
+        }
+
+        public async Task<bool> Exists(int userId)
+        {
+            return await _context.User.AnyAsync(u => u.Id == userId);
         }
     }
 }

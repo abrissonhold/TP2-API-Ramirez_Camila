@@ -9,7 +9,7 @@ namespace Presentation.Examples
         {
             return new ApiError
             {
-                Message = "Parámetro de consulta inválido"
+                message = "Parámetro de consulta inválido"
             };
         }
     }

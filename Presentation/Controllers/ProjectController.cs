@@ -113,7 +113,7 @@ namespace Presentation.Controllers
             }
             catch (ValidationException ex)
             {
-                return BadRequest(new ApiError { message = ex.ToString() });
+                return BadRequest(new ApiError { message = ex.Message });
             }
             catch (NotFoundException ex)
             {

@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250415190244_Init")]
-    partial class Init
+    [Migration("20250626181819_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.4")
+                .HasAnnotation("ProductVersion", "9.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -332,10 +332,10 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(max)");
 
-                    b.Property<decimal>("Amount")
+                    b.Property<decimal>("EstimatedAmount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Duration")
+                    b.Property<int>("EstimatedDuration")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
@@ -391,7 +391,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            Name = "Infrastructure"
+                            Name = "Infraestructura"
                         },
                         new
                         {

@@ -17,7 +17,7 @@ namespace Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.4")
+                .HasAnnotation("ProductVersion", "9.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -329,10 +329,10 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(max)");
 
-                    b.Property<decimal>("Amount")
+                    b.Property<decimal>("EstimatedAmount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Duration")
+                    b.Property<int>("EstimatedDuration")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
@@ -388,7 +388,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            Name = "Infrastructure"
+                            Name = "Infraestructura"
                         },
                         new
                         {
